@@ -1174,6 +1174,41 @@ class Device:
         """
         return len(self.data_stream)
 
+    def read_remote_device_port(self, address, buff, size):
+        """
+        :brief      Read Remote Regesiter
+        :param      address:    The address of the register to be read(type: int)
+        :param      bytearray:  The data to be read from register(type: buffer)
+        :return:    Read Remote Regesiter Data Buff
+        """
+        if not isinstance(address, INT_TYPE):
+            raise ParameterTypeError("Device.read_remote_device_port: "
+                                     "Expected address type is int, not %s" % type(address))
+
+        if not isinstance(size, INT_TYPE):
+            raise ParameterTypeError("Device.read_remote_device_port: "
+                                     "Expected size type is int, not %s" % type(size))
+
+        status, read_result = gx_read_remote_device_port(self.__dev_handle, address, buff, size)
+        StatusProcessor.process(status, 'Device', 'read_remote_device_port')
+
+        return status
+
+    def write_remote_device_port(self, address, buf, size):
+        """
+        :brief      Write remote register
+        :param      address:    The address of the register to be written.(type: int)
+        :param      bytearray:  The data to be written from user.(type: buffer)
+        :return:    none
+        """
+        if not isinstance(address, INT_TYPE):
+            raise ParameterTypeError("Device.write_remote_device_port: "
+                                     "Expected address type is int, not %s" % type(address))
+
+
+        status, r_size = gx_write_remote_device_port(self.__dev_handle, address, buf, size)
+        StatusProcessor.process(status, 'Device', 'write_remote_device_port')
+
 
 class GEVDevice(Device):
     def __init__(self, handle):

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 # -*-mode:python ; tab-width:4 -*- ex:set tabstop=4 shiftwidth=4 expandtab: -*-
 # -*- coding:utf-8 -*-
 
@@ -1459,7 +1459,7 @@ if hasattr(dll, 'GXImportConfigFile'):
         status = dll.GXImportConfigFile(handle_c, byref(file_path_c), verify_c)
         return status
 
-'''
+
 if hasattr(dll, 'GXReadRemoteDevicePort'):
     def gx_read_remote_device_port(handle, address, buff, size):
         """
@@ -1481,7 +1481,7 @@ if hasattr(dll, 'GXReadRemoteDevicePort'):
         size_c.value = size
 
         status = dll.GXReadRemoteDevicePort(handle_c, address_c, byref(buff), byref(size_c))
-        return status, size_c.value
+        return status, buff
 
 
 if hasattr(dll, 'GXWriteRemoteDevicePort'):
@@ -1504,10 +1504,13 @@ if hasattr(dll, 'GXWriteRemoteDevicePort'):
         size_c = c_uint()
         size_c.value = size
 
-        status = dll.GXWriteRemoteDevicePort(handle_c, address_c, byref(buff), byref(size_c))
+        buff_c = c_int()
+        buff_c.value = buff
+
+        status = dll.GXWriteRemoteDevicePort(handle_c, address_c, byref(buff_c), byref(size_c))
         return status, size_c.value
 
-
+'''
 if hasattr(dll, 'GXGigEIpConfiguration'):
     def gx_gige_ip_configuration(mac_address, ipconfig_flag, ip_address, subnet_mask, default_gateway, user_id):
         """
@@ -1706,8 +1709,16 @@ def string_decoding(string):
     :param      string
     :return:
     """
-    if sys.version_info.major == 3:
-        string = string.decode()
+    if sys.platform == 'linux2' or sys.platform == 'linux':
+        try:
+            string = string.decode()
+        except UnicodeDecodeError:
+            string = string.decode("gbk")
+    else:
+        try:
+            string = string.decode("gbk")
+        except UnicodeDecodeError:
+            string = string.decode()
     return string
 
 
