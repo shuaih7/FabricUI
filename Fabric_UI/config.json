@@ -1,0 +1,30 @@
+{
+    "Camera": {
+        "DeviceSerialNumber": "NR0190090349",
+        "ExposureTime": 1000,
+        "Gain": 20,
+        "Binning": 4
+    },
+
+    "Lighting": {
+	
+    },
+
+    "Model": {
+        "original_h": 0,
+        "original_w": 0,
+        "image_raw_h": 352,
+        "image_raw_w": 352,
+        "input_h": 352,
+        "input_w": 352,
+        "channel": 3,
+        "yolo_anchors": [(188,15), (351,16), (351,30)],
+        "yolo_masks": [(0, 1, 2)],
+        "output_shapes": [(1, 18, 11, 11)],
+        "obj_threshold": 0.5,
+        "nms_threshold": 0.2
+    },
+
+    "valid_dir": "/home/nvidia/Documents/Projects/Fabric_defect_detection/YOLO/valid"?
+    "valid_suffix": ".png"
+}
