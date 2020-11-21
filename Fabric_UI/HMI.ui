@@ -116,7 +116,7 @@
          <number>8</number>
         </property>
         <item>
-         <widget class="QLabel" name="imageLabel">
+         <widget class="ImageLabel" name="imageLabel">
           <property name="frameShape">
            <enum>QFrame::Box</enum>
           </property>
@@ -153,13 +153,20 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">ImageLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
    <sender>testBtn</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>runTest()</slot>
+   <slot>runTestInfer()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>52</x>
@@ -189,7 +196,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>runTest()</slot>
+  <slot>runTestInfer()</slot>
   <slot>runInfer()</slot>
  </slots>
 </ui>

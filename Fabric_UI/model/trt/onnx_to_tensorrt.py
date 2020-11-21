@@ -14,7 +14,7 @@ from .data_processing import PreprocessYOLO, PostprocessYOLO, ALL_CATEGORIES
 
 import sys, os
 sys.path.insert(1, os.path.join(sys.path[0], ".."))
-import .common
+import common
 
 TRT_LOGGER = trt.Logger()
 
@@ -107,7 +107,7 @@ class cudaModel(object):
         self.postprocessor = PostprocessYOLO(**postprocessor_args)
 
         # Output shapes expected by the post-processor
-        self.output_shapes = [config_matrix["Model"]["output_shapes"] # [(1, 18, 11, 11)] for the fast-yolo model
+        self.output_shapes = [config_matrix["Model"]["output_shapes"]] # [(1, 18, 11, 11)] for the fast-yolo model
         
         self.engine = get_engine(self.onnx_file_path, self.engine_file_path)
         self.context = self.engine.create_execution_context()

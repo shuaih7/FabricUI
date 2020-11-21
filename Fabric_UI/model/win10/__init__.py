@@ -8,5 +8,4 @@ Updated on 11.20.2020
 Author: haoshaui@handaotech.com
 '''
 
-def sraw_boxes():
-    pass
+
