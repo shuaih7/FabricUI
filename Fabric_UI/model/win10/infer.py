@@ -50,12 +50,13 @@ def resize_img(img, target_size):
     :param target_size:
     :return:
     """
-    img = img.resize(target_size[1:], Image.BILINEAR)
+    h, w = target_size
+    img = cv2.resize(img, (w, h), interpolation = cv2.INTER_LINEAR)
 
     return img
 
 
-def read_image(img, input_size):
+def read_image(img, input_size): # image is an numpy array
     """
     读取图片
     :param img_path:
@@ -64,43 +65,11 @@ def read_image(img, input_size):
     origin = img
     img = resize_img(origin, input_size)
     resized_img = img.copy()
-    if img.mode != 'RGB':
-        img = img.convert('RGB')
     img = np.array(img).astype('float32').transpose((2, 0, 1))  # HWC to CHW
     img -= 127.5
     img *= 0.007843
     img = img[np.newaxis, :]
     return origin, img, resized_img
-
-
-def infer(image):
-    """
-    预测，将结果保存到一副新的图片中
-    :param image_path:
-    :return:
-    """
-    image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    origin, tensor_img, resized_img = read_image(image)
-    input_w, input_h = origin.size[0], origin.size[1]
-    image_shape = np.array([input_h, input_w], dtype='int32')
-    # print("image shape high:{0}, width:{1}".format(input_h, input_w))
-    t1 = time.time()
-    batch_outputs = exe.run(inference_program,
-                            feed={feed_target_names[0]: tensor_img,
-                                  feed_target_names[1]: image_shape[np.newaxis, :]},
-                            fetch_list=fetch_targets,
-                            return_numpy=False)
-    period = (time.time() - t1)*1000
-    print("predict cost time:{0}".format("%2.2f ms" % period))
-    bboxes = np.array(batch_outputs[0])
-    #print(bboxes)
-    if bboxes.shape[1] != 6:
-        # print("No object found")
-        return False, [], [], [], [], period
-    labels = bboxes[:, 0].astype('int32')
-    scores = bboxes[:, 1].astype('float32')
-    boxes = bboxes[:, 2:].astype('float32')
-    return True, boxes, labels, scores, bboxes, period
     
     
 class inferModel(object):
@@ -108,13 +77,12 @@ class inferModel(object):
         self.config_matrix = config_matrix
         self.logger = logger
         
-        self.input_resolution_yolov3_HW = (config_matrix["Model"]["channel"], 
-                                           config_matrix["Model"]["input_h"], config_matrix["Model"]["input_w"])
+        self.input_resolution_yolov3_HW = (config_matrix["Model"]["input_h"], config_matrix["Model"]["input_w"])
         self.preprocessor = read_image
         
     def infer(self, image): # image is an numpy array
         origin, tensor_img, resized_img = self.preprocessor(image, self.input_resolution_yolov3_HW)
-        input_w, input_h = origin.size[0], origin.size[1]
+        input_w, input_h = origin.shape[:2]
         image_shape = np.array([input_h, input_w], dtype='int32')
         
         batch_outputs = exe.run(inference_program,

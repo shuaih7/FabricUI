@@ -51,7 +51,7 @@ js_obj = {
         "nms_threshold": 0.2
     },
 
-    "valid_dir": "E:\Projects\Fabric_Defect_Detection\model_proto\ShuffleNetV2_YOLOv3\v1.1\dataset\valid",
+    "valid_dir": r"E:\Projects\Fabric_Defect_Detection\model_proto\ShuffleNetV2_YOLOv3\v1.1\dataset\valid",
     "valid_suffix": ".png"
 }
 

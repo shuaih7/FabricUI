@@ -28,28 +28,25 @@ class testInferWorker(QThread):
         super(testInferWorker, self).__init__(parent)
         self.img_list = gb.glob(valid_dir + r"/*"+valid_suffix)
         self.model = model
+        self.flag = False
+        
+    @pyqtSlot(bool)
+    def statusReceiver(self, flag):
+        self.flag = flag
 
     def run(self):
         img_list = self.img_list
         for img_file in img_list:
-            image = cv2.imread(img_file, cv2.IMREAD_COLOR)
-            boxes, labels, scores = model.infer(image)
-            resDict = {
-                "image":  image,
-                "boxes":  boxes,
-                "labels": labels,
-                "scores": scores}
-            self.resSignal.emit(resDict)
+            if self.flag:
+                image = cv2.imread(img_file, cv2.IMREAD_COLOR)
+                boxes, labels, scores = self.model.infer(image)
+                resDict = {
+                    "image":  image,
+                    "boxes":  boxes,
+                    "labels": labels,
+                    "scores": scores}
+                self.resSignal.emit(resDict)
         self.stopSignal.emit()
-            
-        """
-        rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        h, w, ch = rgbImage.shape
-        bytesPerLine = ch*w
-        convertToQtFormat = QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
-        self.changePixmap.emit(convertToQtFormat)
-        time.sleep(0.05)  # Note: This is the temperory method
-        """
 
 
     

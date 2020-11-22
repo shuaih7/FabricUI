@@ -27,7 +27,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMe
 
 
 class MainWindow(QMainWindow):
-    videoStart = pyqtSignal(bool) # Signal to communicate with the video thread
+    inferFlag = pyqtSignal(bool) # Signal to communicate with the video thread
+    testInferFlag = pyqtSignal(bool) # Signal to communicate with the video thread
     
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -38,15 +39,23 @@ class MainWindow(QMainWindow):
         with open (config_file, "r") as f: 
             self.config_matrix = json.load(f)
         
-        # Initialize the crucial parameters
-        self.is_run = False
-        self.inferThread = None
-        self.testInferThread = None
-        
+        # Config the crucial parameters
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), log_name="logging")
         self.camera = None #getCamera(self.config_matrix, self.logger)
         self.lighting = getLighting(self.config_matrix, self.logger)
         self.model = inferModel(self.config_matrix, self.logger)
+        
+        # Config the inferThread
+        self.inferThread = None
+        
+        # Config the testInferThread
+        valid_dir = self.config_matrix["valid_dir"]
+        valid_suffix = self.config_matrix["valid_suffix"]
+        self.testInferThread = testInferWorker(self.model, valid_dir, valid_suffix)
+        self.testInferThread.resSignal.connect(self.imageLabel.updateResult)
+        self.testInferThread.stopSignal.connect(self.stopTestInfer)
+        self.testInferFlag.connect(self.testInferThread.statusReceiver)
+        
         
         self.logger_flags = {
             "debug":    self.logger.debug,
@@ -64,25 +73,17 @@ class MainWindow(QMainWindow):
         else: 
             message = "相机连接成功，开始检测..."
             # Do inference ...
-            
-        
+              
     @pyqtSlot()    
     def runTestInfer(self):
-        valid_dir = self.config_matrix["valid_dir"]
-        valid_suffix = self.config_matrix["valid_suffix"]
-        
-        self.testInferThread = testInferWorker(self.model, valid_dir, valid_suffix)
-        self.testInferThread.resSignal.connect(self.imageLabel.updateResult)
-        self.testInferThread.stopSignal.connect(self.stopTestInfer)
-        self.message("开始测试检测...\n检测文件夹： " + valid_dir, flag="info")
-        #self.testBtn.text("停止检测")
-        self.testInferThread.run()
-        
-        
+        if self.testInferThread is not None and self.testInferThread.isRunning():
+            self.testInferFlag.emit(False) 
+        else:
+            self.testInferFlag.emit(True) 
+            self.testInferThread.run()
+   
     @pyqtSlot()
     def stopTestInfer(self):
-        if self.testInferThread is not None and self.testInferThread.isRunning():
-            self.testInferThread.exit()
         self.message("检测完成", flag="info")
         #self.testBtn.text("开始检测")
         

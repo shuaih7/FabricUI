@@ -11,7 +11,7 @@ Author: haoshaui@handaotech.com
 import os
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QPoint, QRect, QLineF, pyqtSlot
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QImage, QPixmap
 
 class ImageLabel(QLabel):
     def __init__(self, config_matrix, parent=None):
@@ -28,7 +28,7 @@ class ImageLabel(QLabel):
         
         print("Received!")
         
-        h, w, ch = rgbImage.shape
+        h, w, ch = image.shape
         bytesPerLine = ch*w
-        convertToQtFormat = QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
+        convertToQtFormat = QImage(image.data, w, h, bytesPerLine, QImage.Format_RGB888)
         
