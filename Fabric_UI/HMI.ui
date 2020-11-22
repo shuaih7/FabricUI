@@ -42,14 +42,23 @@
        <number>20</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1,1,1,2">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1,1,1,1">
         <item>
          <widget class="QLabel" name="logoLabel">
           <property name="frameShape">
-           <enum>QFrame::Box</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap>icon/logo.jpg</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -96,22 +105,22 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QLabel" name="statusLabel">
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
+          <property name="text">
+           <string>欢迎使用！</string>
           </property>
-         </spacer>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="10,1">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
         <property name="spacing">
          <number>8</number>
         </property>
@@ -122,16 +131,6 @@
           </property>
           <property name="text">
            <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="statusLabel">
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="text">
-           <string>欢迎使用！</string>
           </property>
          </widget>
         </item>
