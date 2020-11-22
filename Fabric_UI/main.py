@@ -11,6 +11,7 @@ Author: haoshaui@handaotech.com
 import sys
 from PyQt5.QtWidgets import QApplication
 app = QApplication(sys.argv)
+
 try: from .HMI import MainWindow
 except Exception as expt: from HMI import MainWindow
 

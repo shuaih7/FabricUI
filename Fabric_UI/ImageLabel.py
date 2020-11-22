@@ -11,7 +11,9 @@ Author: haoshaui@handaotech.com
 import os
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QPoint, QRect, QLineF, pyqtSlot
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen
+
+from utils import draw_boxes
 
 class ImageLabel(QLabel):
     def __init__(self, config_matrix, parent=None):
@@ -20,15 +22,24 @@ class ImageLabel(QLabel):
         self.pixmap = None
         
     @pyqtSlot(dict)
-    def updateResult(self, resDict):
+    def refresh(self, resDict):
         image = resDict["image"]
         boxes = resDict["boxes"]
         labels = resDict["labels"]
         scores = resDict["scores"]
         
-        print("Received!")
-        
+        image = draw_boxes(image, boxes)
         h, w, ch = image.shape
         bytesPerLine = ch*w
         convertToQtFormat = QImage(image.data, w, h, bytesPerLine, QImage.Format_RGB888)
+        self.pixmap = QPixmap.fromImage(convertToQtFormat).scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.update()
+        
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        
+        if self.pixmap is not None: 
+            off_x = (self.size().width() - self.pixmap.width()) / 2
+            off_y = (self.size().height() - self.pixmap.height()) / 2
+            painter.drawPixmap(off_x, off_y, self.pixmap)
         

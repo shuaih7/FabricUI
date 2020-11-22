@@ -14,11 +14,6 @@ import paddle.fluid as fluid
 from PIL import Image
 from PIL import ImageDraw
 
-place = fluid.CUDAPlace(0) # Use CUDAPlace as default
-exe = fluid.Executor(place)
-path = r"E:\Projects\Fabric_Defect_Detection\model_proto\MobileNet_YOLO\Fast_YOLO\freeze_model" 
-[inference_program, feed_target_names, fetch_targets] = fluid.io.load_inference_model(dirname=path, executor=exe, model_filename='__model__', params_filename='params')
-
 
 def draw_bbox_image(img, boxes, scores, gt=False):
     '''
@@ -74,6 +69,12 @@ def read_image(img, input_size): # image is an numpy array
     
 class inferModel(object):
     def __init__(self, config_matrix, logger):
+        # Initialize the paddle model
+        place = fluid.CUDAPlace(0) # Use CUDAPlace as default
+        self.exe = fluid.Executor(place)
+        path = r"E:\Projects\Fabric_Defect_Detection\model_proto\MobileNet_YOLO\Fast_YOLO\freeze_model" 
+        [self.inference_program, self.feed_target_names, self.fetch_targets] = fluid.io.load_inference_model(dirname=path, executor=self.exe, model_filename='__model__', params_filename='params')
+    
         self.config_matrix = config_matrix
         self.logger = logger
         
@@ -85,10 +86,10 @@ class inferModel(object):
         input_w, input_h = origin.shape[:2]
         image_shape = np.array([input_h, input_w], dtype='int32')
         
-        batch_outputs = exe.run(inference_program,
-                                feed={feed_target_names[0]: tensor_img,
-                                      feed_target_names[1]: image_shape[np.newaxis, :]},
-                                fetch_list=fetch_targets,
+        batch_outputs = self.exe.run(self.inference_program,
+                                feed={self.feed_target_names[0]: tensor_img,
+                                      self.feed_target_names[1]: image_shape[np.newaxis, :]},
+                                fetch_list=self.fetch_targets,
                                 return_numpy=False)
         bboxes = np.array(batch_outputs[0])
         #print(bboxes)

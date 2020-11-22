@@ -78,7 +78,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>测试检测</string>
+           <string>开始测试</string>
           </property>
          </widget>
         </item>
@@ -118,7 +118,7 @@
         <item>
          <widget class="ImageLabel" name="imageLabel">
           <property name="frameShape">
-           <enum>QFrame::Box</enum>
+           <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
            <string/>

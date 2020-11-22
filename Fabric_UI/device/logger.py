@@ -19,12 +19,12 @@ def getLogger(log_path, log_name="log"):
     logger.setLevel(logging.INFO)
     if not os.path.exists(log_path):
         os.makedirs(log_path)
-    sh = logging.StreamHandler()
-    fh = logging.FileHandler(log_name, mode='w')
+    #sh = logging.StreamHandler()
+    fh = logging.FileHandler(log_name, encoding='utf-8', mode='a')
     fh.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
     fh.setFormatter(formatter)
-    sh.setFormatter(formatter)
-    logger.addHandler(sh)
+    #sh.setFormatter(formatter)
+    #logger.addHandler(sh)
     logger.addHandler(fh)
     return logger
