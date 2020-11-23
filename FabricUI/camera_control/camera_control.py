@@ -68,15 +68,17 @@ def main(num, folder_size):
         print('Image %d capture time: %.3f' % (i, time.time() - start_time))
         # save image if folder has <= folder_size images, remove from the 1st 
         # image if folder has > folder_size images
+
+    """
         files = os.listdir(path)
         files = sorted(files, key=lambda x: os.path.getctime(os.path.join(path, x)))
         img_num = len(files)
-        if img_num < folder_size:
-            cv2.imwrite(path + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f') + '.bmp', img)
+        if img_num < folder_size: pass
+            # cv2.imwrite(path + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f') + '.bmp', img)
             # img.save(path + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f') + '.bmp')
         else:
             os.remove(os.path.join(path, files[0]))
-            cv2.imwrite(path + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f') + '.bmp', img)
+            #cv2.imwrite(path + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f') + '.bmp', img)
             # img.save(path + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f') + '.bmp')
 
         # print frame ID & running time for each image
@@ -88,7 +90,7 @@ def main(num, folder_size):
 
     # close device
     cam.close_device()
-
+    """
 
 if __name__ == "__main__":
     main(200, 100)

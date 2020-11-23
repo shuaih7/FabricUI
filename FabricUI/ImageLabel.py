@@ -21,7 +21,7 @@ class ImageLabel(QLabel):
         self.config_matrix = config_matrix
         self.pixmap = None
         
-    def refresh(self, image, boxes, labels, scores):
+    def refresh(self, image, boxes=[], labels=[], scores=[]):
         image = draw_boxes(image, boxes)
         h, w, ch = image.shape
         bytesPerLine = ch*w

@@ -116,3 +116,13 @@
 2020-11-23 15:36:27,447 - HMI.py[line:99] - INFO: 测试检测完成！
 2020-11-23 15:36:30,299 - HMI.py[line:99] - INFO: 开始测试检测...
 2020-11-23 15:37:19,999 - HMI.py[line:99] - INFO: 测试检测完成！
+2020-11-23 15:43:58,886 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 15:44:01,548 - HMI.py[line:99] - INFO: 开始测试检测...
+2020-11-23 15:44:46,007 - HMI.py[line:99] - INFO: 测试检测完成！
+2020-11-23 17:06:04,563 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 17:07:08,418 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 17:09:17,168 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 17:09:38,590 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 17:10:15,749 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 17:20:06,651 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-23 17:59:35,822 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.

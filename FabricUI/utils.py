@@ -11,8 +11,8 @@ Author: haoshaui@handaotech.com
 import os
 import cv2
 
-def draw_boxes(image, boxes, color=(255,0,0), thickness=2):
-    if boxes is None or len(boxes) == 0: return image
+def draw_boxes(image, boxes=[], color=(255,0,0), thickness=2):
+    if len(boxes) == 0: return image
     for box in boxes:
         start_point = (int(box[0]), int(box[1]))
         end_point = (int(box[2]), int(box[3]))

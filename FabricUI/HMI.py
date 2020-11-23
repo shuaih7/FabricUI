@@ -16,7 +16,7 @@ import glob as gb
 abs_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(abs_path)
 
-from device import getLogger, getLighting
+from device import getCamera, getLogger, getLighting
 from model import cudaModel
 from utils import draw_boxes
 from PyQt5.uic import loadUi
@@ -39,27 +39,65 @@ class MainWindow(QMainWindow):
         
         # Config the devices
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), log_name="logging.log")
-        self.camera = None #getCamera(self.config_matrix, self.logger)
+        self.camera = getCamera(self.config_matrix, self.logger)
         self.lighting = getLighting(self.config_matrix, self.logger)
         self.model = cudaModel(self.config_matrix, self.logger)
         
         # Initialize the crucial parameters
-        self.isRunning = False
-        self.btn_list = [self.startBtn, self.testBtn, self.configBtn]
-        self.label_list = [self.imageLabel, self.statusLabel]
+        self.isRunning = False # whether images are showing on the label
+        self.isInferring = False
         self.logger_flags = {
             "debug":    self.logger.debug,
             "info":     self.logger.info,
             "warning":  self.logger.warning,
             "error":    self.logger.error,
             "critical": self.logger.critical}
-        self.initGUIFormat()
-        
-    def initGUIFormat(self):
-        btnFont = QFont()
-        btnFont.setFamily("Arial") #括号里可以设置成自己想要的其它字体
-        btnFont.setPointSize(18)   #括号里的数字可以设置成自己想要的字体大小
-        
+
+        self.configDevice()
+        self.liveStream()
+    
+    def configDevice(self):
+        # Config the camera
+        self.camera.ExposureTime.set(ExposureTime)
+        self.camera.Gain.set(Gain)
+        self.camera.BinningHorizontal.set(Binning)
+        self.camera.BinningVertical.set(Binning)
+
+        # set trigger mode and trigger source
+        # cam.TriggerMode.set(gx.GxSwitchEntry.OFF)
+        self.camera.TriggerMode.set(gx.GxSwitchEntry.ON)
+        self.camera.TriggerSource.set(gx.GxTriggerSourceEntry.SOFTWARE)
+
+        # start data acquisition
+        self.camera.stream_on()
+    
+    def liveStream(self):
+        if self.camera is None: 
+            self.message("相机连接失败，请检查相机设置并重试。", flag="info")
+            return
+
+        # Config the camera, this cannot be done in another function or class
+
+        self.isRunning = True
+
+        while self.isRunning:
+            self.camera.TriggerSoftware.send_command()
+
+            image_raw = self.camera.data_stream[0].get_image()
+            if image_raw is None: continue
+            image = image_raw.get_numpy_array()
+            if image is None: continue
+            # image segment here ...
+
+            if self.isInferring:
+                boxes, labels, scores = self.model.infer(image)
+                self.imageLabel.refresh(image,boxes,labels,scores)
+            else: 
+                self.imageLabel.refresh(image)
+            QApplication.processEvents()
+        self.stopInfer()
+
+
     @pyqtSlot()    
     def runInfer(self):
         if self.camera is None: 
@@ -72,7 +110,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()    
     def runTestInfer(self):
         if self.isRunning:
-            self.stopTestInfer()  
+            self.stopInfer()  
         else:
             self.message("开始测试检测...", flag="info")
             self.testBtn.setText("结束测试")
@@ -88,9 +126,9 @@ class MainWindow(QMainWindow):
                     boxes, labels, scores = self.model.infer(image)
                     self.imageLabel.refresh(image, boxes, labels, scores)
                     QApplication.processEvents() # Refresh the MainWindow
-            self.stopTestInfer()
+            self.stopInfer()
 
-    def stopTestInfer(self):
+    def stopInfer(self):
         self.isRunning = False
         self.message("测试检测完成！", flag="info")
         self.testBtn.setText("开始测试")
