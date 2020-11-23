@@ -9,7 +9,7 @@ Author: haoshaui@handaotech.com
 '''
 
 import os
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel, QApplication
 from PyQt5.QtCore import Qt, QPoint, QRect, QLineF, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen
 
@@ -21,13 +21,7 @@ class ImageLabel(QLabel):
         self.config_matrix = config_matrix
         self.pixmap = None
         
-    @pyqtSlot(dict)
-    def refresh(self, resDict):
-        image = resDict["image"]
-        boxes = resDict["boxes"]
-        labels = resDict["labels"]
-        scores = resDict["scores"]
-        
+    def refresh(self, image, boxes, labels, scores):
         image = draw_boxes(image, boxes)
         h, w, ch = image.shape
         bytesPerLine = ch*w

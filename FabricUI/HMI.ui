@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1020</width>
-    <height>780</height>
+    <width>1272</width>
+    <height>863</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,6 +73,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="styleSheet">
+           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px</string>
+          </property>
           <property name="text">
            <string>开始检测</string>
           </property>
@@ -85,6 +88,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px</string>
           </property>
           <property name="text">
            <string>开始测试</string>
@@ -99,6 +105,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="styleSheet">
+           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px</string>
+          </property>
           <property name="text">
            <string>系统设置</string>
           </property>
@@ -106,14 +115,23 @@
         </item>
         <item>
          <widget class="QLabel" name="statusLabel">
+          <property name="styleSheet">
+           <string notr="true">font-size: 20px;height: 36px;width: 100px</string>
+          </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
           </property>
           <property name="text">
            <string>欢迎使用！</string>
           </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
           <property name="wordWrap">
            <bool>true</bool>
+          </property>
+          <property name="indent">
+           <number>-1</number>
           </property>
          </widget>
         </item>
@@ -127,7 +145,10 @@
         <item>
          <widget class="ImageLabel" name="imageLabel">
           <property name="frameShape">
-           <enum>QFrame::Panel</enum>
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
           </property>
           <property name="text">
            <string/>
@@ -145,7 +166,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1020</width>
+     <width>1272</width>
      <height>26</height>
     </rect>
    </property>
