@@ -13,7 +13,9 @@ from PIL import Image, ImageDraw
 from .data_processing import PreprocessYOLO, PostprocessYOLO, ALL_CATEGORIES
 
 import sys, os
-sys.path.insert(1, os.path.join(sys.path[0], ".."))
+#sys.path.insert(1, os.path.join(sys.path[0], ".."))
+abs_path = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(abs_path)
 import common
 
 TRT_LOGGER = trt.Logger()
@@ -98,24 +100,26 @@ class cudaModel(object):
         # self.shape_orig_WH = image_raw.size
         
         # Config the post-processor arguments
-        self.shape_orig_WH = (config_matrix["Model"]["original_h"], config_matrix["Model"]["original_w"])
-        self.postprocessor_args = {"yolo_masks": config_matrix["Model"]["yolo_masks"],  # A list of 3 three-dimensional tuples for the YOLO masks
+        self.shape_orig_WH = (config_matrix["Model"]["image_raw_h"], config_matrix["Model"]["image_raw_w"])
+        postprocessor_args = {"yolo_masks": config_matrix["Model"]["yolo_masks"],  # A list of 3 three-dimensional tuples for the YOLO masks
                               "yolo_anchors": config_matrix["Model"]["yolo_anchors"],   # A list of 9 two-dimensional tuples for the YOLO anchors],
                               "obj_threshold": config_matrix["Model"]["obj_threshold"], # Threshold for object coverage, float value between 0 and 1
                               "nms_threshold": config_matrix["Model"]["nms_threshold"], # Threshold for non-max suppression algorithm, float value between 0 and 1
-                              "yolo_input_resolution": self.input_resolution_yolov3_HW}
+                              "yolo_input_resolution": input_resolution_yolov3_HW}
         self.postprocessor = PostprocessYOLO(**postprocessor_args)
 
         # Output shapes expected by the post-processor
-        self.output_shapes = [config_matrix["Model"]["output_shapes"]] # [(1, 18, 11, 11)] for the fast-yolo model
-        
-        self.engine = get_engine(self.onnx_file_path, self.engine_file_path)
+        self.output_shapes = config_matrix["Model"]["output_shapes"] # [(1, 18, 11, 11)] for the fast-yolo model
+    
+        onnx_file_path = os.path.join(abs_path, "fast_yolo.onnx")
+        engine_file_path = os.path.join(abs_path, "fast_yolo.trt")
+        self.engine = get_engine(onnx_file_path, engine_file_path)
         self.context = self.engine.create_execution_context()
         self.inputs, self.outputs, self.bindings, self.stream = common.allocate_buffers(self.engine)
         logger.info("Successfully load the detection model.")
   
-    def infer(self, image, mode="run"): # image is a numpy array
-        _, image = self.preprocessor.process(image, mode=mode)
+    def infer(self, image): # image is a numpy array
+        _, image = self.preprocessor.process(image)
         self.inputs[0].host = image
         trt_outputs = common.do_inference(self.context, bindings=self.bindings, inputs=self.inputs, outputs=self.outputs, stream=self.stream)
 
@@ -125,5 +129,5 @@ class cudaModel(object):
         # Run the post-processing algorithms on the TensorRT outputs and get the bounding box details of detected objects
         boxes, classes, scores = self.postprocessor.process(trt_outputs, (self.shape_orig_WH))
         
-        return boxes, classes, scroes
+        return boxes, classes, scores
 

@@ -35,18 +35,18 @@ class PreprocessYOLO(object):
         """
         self.yolo_input_resolution = yolo_input_resolution
 
-    def process(self, input_image, mode="test"): 
+    def process(self, input_image): 
         """Load an image from the specified input path,
         and return it together with a pre-processed version required for feeding it into a
         YOLOv3 network.
         Keyword arguments:
         input_image_path -- string path of the image to be loaded
         """
-        image_raw, image_resized = self._load_and_resize(input_image, mode=mode)
+        image_raw, image_resized = self._load_and_resize(input_image)
         image_preprocessed = self._shuffle_and_normalize(image_resized)
         return image_raw, image_preprocessed
 
-    def _load_and_resize(self, input_image, mode="test"):
+    def _load_and_resize(self, input_image):
         """Load an image from the specified path and resize it to the input resolution.
         Return the input image before resizing as a PIL Image (required for visualization),
         and the resized image as a NumPy float array.
@@ -54,8 +54,8 @@ class PreprocessYOLO(object):
         input_image_path -- string path of the image to be loaded
         """
         
-        if mode == "test": image_raw = cv2.imread(input_image, cv2.IMREAD_COLOR)
-        else: image_raw = cv2.cvtColor(input_image, cv2.COLOR_GRAY2BGR)
+        if input_image.shape[-1] != 3: image_raw = cv2.cvtColor(input_image, cv2.COLOR_GRAY2BGR)
+        else: image_raw = input_image
         image_raw = Image.fromarray(image_raw)
 
         # Expecting yolo_input_resolution in (height, width) format, adjusting to PIL
@@ -189,11 +189,16 @@ class PostprocessYOLO(object):
             nscores.append(confidence[keep])
 
         if not nms_categories and not nscores:
-            return None, None, None
+            return [], [], []
 
-        boxes = np.concatenate(nms_boxes)
+        boxes = []
+        bbxes = np.concatenate(nms_boxes)
         categories = np.concatenate(nms_categories)
         confidences = np.concatenate(nscores)
+
+        for bbx in bbxes:
+            x1, y1, w, h = bbx
+            boxes.append([x1,y1,x1+w,y1+h])
 
         return boxes, categories, confidences
 

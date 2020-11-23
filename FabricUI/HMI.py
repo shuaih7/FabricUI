@@ -17,7 +17,7 @@ abs_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(abs_path)
 
 from device import getLogger, getLighting
-from model import inferModel
+from model import cudaModel
 from utils import draw_boxes
 from PyQt5.uic import loadUi
 from PyQt5 import QtGui, QtWidgets
@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), log_name="logging.log")
         self.camera = None #getCamera(self.config_matrix, self.logger)
         self.lighting = getLighting(self.config_matrix, self.logger)
-        self.model = inferModel(self.config_matrix, self.logger)
+        self.model = cudaModel(self.config_matrix, self.logger)
         
         # Initialize the crucial parameters
         self.isRunning = False
@@ -80,7 +80,7 @@ class MainWindow(QMainWindow):
             
             valid_dir = self.config_matrix["valid_dir"]
             valid_suffix = self.config_matrix["valid_suffix"]
-            img_list = gb.glob(valid_dir + r"/*"+valid_suffix)
+            img_list = gb.glob(valid_dir + "/*"+valid_suffix)
             
             for img_file in img_list:
                 if self.isRunning:
