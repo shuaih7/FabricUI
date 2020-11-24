@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 11.23.2020
+Updated on 11.24.2020
 
 Author: haoshaui@handaotech.com
 '''
@@ -16,7 +16,8 @@ import glob as gb
 abs_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(abs_path)
 
-from device import getCamera, getLogger, getLighting
+from third_party import gxipy as gx
+from log import getLogger
 from model import cudaModel
 from utils import draw_boxes
 from PyQt5.uic import loadUi
@@ -39,13 +40,13 @@ class MainWindow(QMainWindow):
         
         # Config the devices
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), log_name="logging.log")
-        self.camera = getCamera(self.config_matrix, self.logger)
-        self.lighting = getLighting(self.config_matrix, self.logger)
+        self.camera = None
+        self.lighting = None
         self.model = cudaModel(self.config_matrix, self.logger)
         
         # Initialize the crucial parameters
-        self.isRunning = False # whether images are showing on the label
-        self.isInferring = False
+        self.isRunning = False   # Whether images are showing on the label
+        self.isInferring = False # Whether the livestream inference is on
         self.logger_flags = {
             "debug":    self.logger.debug,
             "info":     self.logger.info,
@@ -53,41 +54,70 @@ class MainWindow(QMainWindow):
             "error":    self.logger.error,
             "critical": self.logger.critical}
 
-        self.configDevice()
-        self.liveStream()
+        self.liveStream() # Livestream while openning the app
+
+    def liveStream(self):
+        """
+        Re-config the camera when the liveStream function is called
+        
+        Todo: integrate the device from the raw third_party module
+        Note:
+            1. Make sure to stream on the camera before capturing and stream_off before closing the device
+            2. The integration is not done here because the camera object device_manager.update_device_list()
+               will lose all of its configurations if returned or passed to another function
+        """
+        camera_config = self.config_matrix["Camera"]
     
-    def configDevice(self):
-        # Config the camera
-        self.camera.ExposureTime.set(ExposureTime)
-        self.camera.Gain.set(Gain)
-        self.camera.BinningHorizontal.set(Binning)
-        self.camera.BinningVertical.set(Binning)
+        # Fetch the config parameters
+        SN = camera_config['DeviceSerialNumber']
+        ExposureTime = camera_config['ExposureTime']
+        Gain = camera_config['Gain']
+        Binning = camera_config['Binning']
+
+        # create a device manager
+        device_manager = gx.DeviceManager()
+        dev_num, dev_info_list = device_manager.update_device_list()
+        
+        if dev_num == 0: 
+            self.message("未搜寻到相机，请检查相机设置并重试。", flag="warning")
+            return
+        else:
+            self.message("搜寻到相机，连接中...", flag="info")
+        
+        # open the camera device by serial number
+        try:
+            cam = device_manager.open_device_by_sn(SN)
+            self.camera = cam
+        except Exception as expt:
+            self.message("未连接到相机，请检查相机序列号是否正确并重试。", flag="warning")
+            return
+  
+        # set exposure & gain
+        cam.ExposureTime.set(ExposureTime)
+        cam.Gain.set(Gain)
+        cam.BinningHorizontal.set(Binning)
+        cam.BinningVertical.set(Binning)
 
         # set trigger mode and trigger source
         # cam.TriggerMode.set(gx.GxSwitchEntry.OFF)
-        self.camera.TriggerMode.set(gx.GxSwitchEntry.ON)
-        self.camera.TriggerSource.set(gx.GxTriggerSourceEntry.SOFTWARE)
-
-        # start data acquisition
-        self.camera.stream_on()
-    
-    def liveStream(self):
-        if self.camera is None: 
-            self.message("相机连接失败，请检查相机设置并重试。", flag="info")
-            return
-
-        # Config the camera, this cannot be done in another function or class
-
+        cam.TriggerMode.set(gx.GxSwitchEntry.ON)
+        cam.TriggerSource.set(gx.GxTriggerSourceEntry.SOFTWARE)
+        
+        # Set the status to the capturing mode
+        cam.stream_on()
         self.isRunning = True
 
         while self.isRunning:
             self.camera.TriggerSoftware.send_command()
-
-            image_raw = self.camera.data_stream[0].get_image()
-            if image_raw is None: continue
-            image = image_raw.get_numpy_array()
-            if image is None: continue
-            # image segment here ...
+            
+            try:
+                image_raw = self.camera.data_stream[0].get_image()
+                if image_raw is None: continue
+                image = image_raw.get_numpy_array()
+                if image is None: continue
+            except: 
+                self.stopRunning("相机连接中断，请检查链接并重试。", flag="error")
+                return
 
             if self.isInferring:
                 boxes, labels, scores = self.model.infer(image)
@@ -95,22 +125,29 @@ class MainWindow(QMainWindow):
             else: 
                 self.imageLabel.refresh(image)
             QApplication.processEvents()
-        self.stopInfer()
-
+            
+        # Make sure to stop the steam and close the device before exit
+        cam.stream_off()
+        cam.close_device()
 
     @pyqtSlot()    
     def runInfer(self):
-        if self.camera is None: 
-            self.message("相机连接失败，请检查相机设置并重试。", flag="info")
-            
+        if self.camera is None or not self.isRunning: 
+            self.message("相机连接失败，请检查相机设置并重试。", flag="warning")
         else: 
-            message = "相机连接成功，开始检测..."
-            # Do inference ...
+            if self.isInferring: 
+                self.isInferring = False
+                self.message("检测中止。", flag="info")
+                self.startBtn.setText("开始检测")
+            else: 
+                self.isInferring = True
+                self.message("开始检测...", flag="info")
+                self.startBtn.setText("结束检测")
               
     @pyqtSlot()    
     def runTestInfer(self):
         if self.isRunning:
-            self.stopInfer()  
+            self.stopRunning("正在结束当前检测...\n请再次点击开始测试检测。", flag="info")  
         else:
             self.message("开始测试检测...", flag="info")
             self.testBtn.setText("结束测试")
@@ -126,12 +163,13 @@ class MainWindow(QMainWindow):
                     boxes, labels, scores = self.model.infer(image)
                     self.imageLabel.refresh(image, boxes, labels, scores)
                     QApplication.processEvents() # Refresh the MainWindow
-            self.stopInfer()
+            self.stopRunning("测试检测完成。", flag="info")
+            self.testBtn.setText("开始测试")
 
-    def stopInfer(self):
+    def stopRunning(self, msg="", flag="info"):
         self.isRunning = False
-        self.message("测试检测完成！", flag="info")
-        self.testBtn.setText("开始测试")
+        self.isInferring = False
+        self.message(msg, flag=flag)
         
     def message(self, msg, flag="info"): 
         self.logger_flags[flag](msg)
