@@ -30,6 +30,9 @@
     <property name="leftMargin">
      <number>20</number>
     </property>
+    <property name="topMargin">
+     <number>20</number>
+    </property>
     <property name="rightMargin">
      <number>20</number>
     </property>
@@ -42,9 +45,21 @@
        <number>20</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1,1,1,1">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="4,3,3,3">
         <item>
          <widget class="QLabel" name="logoLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>316</width>
+            <height>275</height>
+           </size>
+          </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -78,22 +93,6 @@
           </property>
           <property name="text">
            <string>开始检测</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="testBtn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px</string>
-          </property>
-          <property name="text">
-           <string>开始测试</string>
           </property>
          </widget>
         </item>
@@ -182,22 +181,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>testBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>runTestInfer()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>52</x>
-     <y>368</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>94</x>
-     <y>716</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>startBtn</sender>
    <signal>clicked()</signal>

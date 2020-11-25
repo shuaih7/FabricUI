@@ -101,6 +101,6 @@ def do_inference(context, bindings, inputs, outputs, stream, batch_size=1):
     # Synchronize the stream
     stream.synchronize()
     # Return only the host outputs.
-    print("=> Inference time: %.4f" %(time.time()-start))
+    # print("=> Inference time: %.4f" %(time.time()-start))
     return [out.host for out in outputs]
 

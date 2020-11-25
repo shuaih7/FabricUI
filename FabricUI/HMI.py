@@ -47,6 +47,7 @@ class MainWindow(QMainWindow):
         # Initialize the crucial parameters
         self.isRunning = False   # Whether images are showing on the label
         self.isInferring = False # Whether the livestream inference is on
+        self.isInterrupt = False # Whether the livestream is interrupted
         self.logger_flags = {
             "debug":    self.logger.debug,
             "info":     self.logger.info,
@@ -54,8 +55,9 @@ class MainWindow(QMainWindow):
             "error":    self.logger.error,
             "critical": self.logger.critical}
 
-        self.show()
-        self.liveStream() # Livestream while openning the app
+        #self.showMaximized()
+        self.message("\nFabricUI 已开启。", flag="info")
+        #self.liveStream() # Livestream while openning the app
 
     def liveStream(self):
         """
@@ -89,6 +91,7 @@ class MainWindow(QMainWindow):
         try:
             cam = device_manager.open_device_by_sn(SN)
             self.camera = cam
+            self.message("相机连接成功。", flag="info")
         except Exception as expt:
             self.message("未连接到相机，请检查相机序列号是否正确并重试。", flag="warning")
             return
@@ -107,11 +110,12 @@ class MainWindow(QMainWindow):
         # Set the status to the capturing mode
         cam.stream_on()
         self.isRunning = True
+        self.isInterrupt = False
+        if self.isInferring: self.startBtn.setText("停止检测")
 
-        while self.isRunning:
-            self.camera.TriggerSoftware.send_command()
-            
+        while self.isRunning: 
             try:
+                self.camera.TriggerSoftware.send_command()
                 image_raw = self.camera.data_stream[0].get_image()
                 if image_raw is None: continue
                 image = image_raw.get_numpy_array()
@@ -122,6 +126,9 @@ class MainWindow(QMainWindow):
 
             except: 
                 self.stopRunning("相机连接中断，请检查链接并重试。", flag="error")
+                self.startBtn.setText("开始检测")
+                self.isInterrupt = True
+                # Todo: stream_off, close device ...
                 return
 
             if self.isInferring:
@@ -137,7 +144,10 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()    
     def runInfer(self):
-        if self.camera is None or not self.isRunning: 
+        if self.isInterrupt:
+            self.isInferring = True
+            self.liveStream()
+        elif self.camera is None or not self.isRunning: 
             self.message("相机连接失败，请检查相机设置并重试。", flag="warning")
         else: 
             if self.isInferring: 
@@ -147,8 +157,9 @@ class MainWindow(QMainWindow):
             else: 
                 self.isInferring = True
                 self.message("开始检测...", flag="info")
-                self.startBtn.setText("结束检测")
-              
+                self.startBtn.setText("停止检测")
+                
+    """         
     @pyqtSlot()    
     def runTestInfer(self):
         if self.isRunning:
@@ -170,6 +181,7 @@ class MainWindow(QMainWindow):
                     QApplication.processEvents() # Refresh the MainWindow
             self.stopRunning("测试检测完成。", flag="info")
             self.testBtn.setText("开始测试")
+    """
 
     def stopRunning(self, msg="", flag="info"):
         self.isRunning = False
@@ -179,6 +191,22 @@ class MainWindow(QMainWindow):
     def message(self, msg, flag="info"): 
         self.logger_flags[flag](msg)
         self.statusLabel.setText(msg)
+        
+    def closeEvent(self, ev):   
+        reply = QMessageBox.question(
+            self,
+            "退出程序",
+            "您确定要退出吗?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No)
+
+        if reply == QMessageBox.Yes: 
+            #if self.isInferring: self.isInferring = False
+            #if self.isRunning: self.isRunning = False
+            self.message("FabricUI 已关闭。\n", flag="info")
+            sys.exit()
+            #ev.accept()
+        else: ev.ignore()
       
         
         
