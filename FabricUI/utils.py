@@ -3,7 +3,7 @@
 
 '''
 Created on 11.20.2020
-Updated on 11.24.2020
+Updated on 11.25.2020
 
 Author: haoshaui@handaotech.com
 '''
@@ -30,6 +30,7 @@ def create_background(size, seed=0):
     image = np.ones(size, dtype=np.uint8) * seed
     save_dir = os.path.join(abs_path, "icon")
     save_name = os.path.join(save_dir, "background.jpg")
+    cv2.imwrite(save_name, image)
     
 
 if __name__ == "__main__":
