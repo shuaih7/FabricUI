@@ -20,6 +20,8 @@ from third_party import gxipy as gx
 from log import getLogger
 from model import cudaModel
 from utils import draw_boxes
+from ConfigWidget import ConfigWidget
+
 from PyQt5.uic import loadUi
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap, QFont
@@ -43,6 +45,7 @@ class MainWindow(QMainWindow):
         self.camera = None
         self.lighting = None
         self.model = cudaModel(self.config_matrix, self.logger)
+        self.configWidget = ConfigWidget(self.config_matrix)
         
         # Initialize the crucial parameters
         self.isRunning = False   # Whether images are showing on the label
@@ -182,6 +185,10 @@ class MainWindow(QMainWindow):
             self.stopRunning("测试检测完成。", flag="info")
             self.testBtn.setText("开始测试")
     """
+    
+    @pyqtSlot()
+    def sysConfig(self):
+        self.configWidget.show()
 
     def stopRunning(self, msg="", flag="info"):
         self.isRunning = False

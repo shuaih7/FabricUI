@@ -46,6 +46,9 @@
       </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout" stretch="4,3,3,3">
+        <property name="spacing">
+         <number>15</number>
+        </property>
         <item>
          <widget class="QLabel" name="logoLabel">
           <property name="sizePolicy">
@@ -59,6 +62,9 @@
             <width>316</width>
             <height>275</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
@@ -89,10 +95,20 @@
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px</string>
+           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
           </property>
           <property name="text">
            <string>开始检测</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>icon/startdet.png</normaloff>icon/startdet.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -105,17 +121,27 @@
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px</string>
+           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
           </property>
           <property name="text">
            <string>系统设置</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>icon/syssetting.png</normaloff>icon/syssetting.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="statusLabel">
           <property name="styleSheet">
-           <string notr="true">font-size: 20px;height: 36px;width: 100px</string>
+           <string notr="true">font: bold; font-size: 20px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
@@ -143,6 +169,9 @@
         </property>
         <item>
          <widget class="ImageLabel" name="imageLabel">
+          <property name="styleSheet">
+           <string notr="true">border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+          </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
           </property>
@@ -151,6 +180,9 @@
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -188,8 +220,8 @@
    <slot>runInfer()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>282</y>
+     <x>111</x>
+     <y>489</y>
     </hint>
     <hint type="destinationlabel">
      <x>117</x>
@@ -197,9 +229,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>configBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>sysConfig()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>591</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>280</x>
+     <y>833</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runTestInfer()</slot>
   <slot>runInfer()</slot>
+  <slot>sysConfig()</slot>
  </slots>
 </ui>
