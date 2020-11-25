@@ -54,6 +54,7 @@ class MainWindow(QMainWindow):
             "error":    self.logger.error,
             "critical": self.logger.critical}
 
+        self.show()
         self.liveStream() # Livestream while openning the app
 
     def liveStream(self):
@@ -115,6 +116,10 @@ class MainWindow(QMainWindow):
                 if image_raw is None: continue
                 image = image_raw.get_numpy_array()
                 if image is None: continue
+                else: # Convert gray scale to BGR
+                    c = image.shape[-1]
+                    if c != 3: image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+
             except: 
                 self.stopRunning("相机连接中断，请检查链接并重试。", flag="error")
                 return
