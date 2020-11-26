@@ -28,7 +28,7 @@
    <string notr="true">font-size: 20px;height: 30px;width: 80px; </string>
   </property>
   <property name="currentIndex">
-   <number>2</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="cameraTab">
    <property name="font">
@@ -298,6 +298,10 @@
           <property name="text">
            <string>保存</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>icon/save.png</normaloff>icon/save.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -449,6 +453,10 @@
           </property>
           <property name="text">
            <string>保存</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>icon/save.png</normaloff>icon/save.png</iconset>
           </property>
          </widget>
         </item>
@@ -923,6 +931,10 @@
           <property name="text">
            <string>保存</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>icon/save.png</normaloff>icon/save.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -963,9 +975,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lightSaveBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>TabWidget</receiver>
+   <slot>save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>488</x>
+     <y>402</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>modelSaveBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>TabWidget</receiver>
+   <slot>save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>510</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>514</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>save()</slot>
   <slot>cancel()</slot>
+  <slot>save()</slot>
  </slots>
 </ui>

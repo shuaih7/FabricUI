@@ -119,7 +119,7 @@ class cudaModel(object):
         logger.info("Successfully load the detection model.")
   
     def infer(self, image): # image is a numpy array
-        _, image = self.preprocessor.process(image)
+        image_crop, image = self.preprocessor.process(image)
         self.inputs[0].host = image
         trt_outputs = common.do_inference(self.context, bindings=self.bindings, inputs=self.inputs, outputs=self.outputs, stream=self.stream)
 
@@ -129,5 +129,5 @@ class cudaModel(object):
         # Run the post-processing algorithms on the TensorRT outputs and get the bounding box details of detected objects
         boxes, classes, scores = self.postprocessor.process(trt_outputs, (self.shape_orig_WH))
         
-        return boxes, classes, scores
+        return image_crop, boxes, classes, scores
 

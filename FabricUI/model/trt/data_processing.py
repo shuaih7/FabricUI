@@ -27,13 +27,14 @@ class PreprocessYOLO(object):
     input resolution for YOLOv3-608.
     """
 
-    def __init__(self, yolo_input_resolution):
+    def __init__(self, yolo_input_resolution, offsets=[0,0,0,0]):
         """Initialize with the input resolution for YOLOv3, which will stay fixed in this sample.
         Keyword arguments:
         yolo_input_resolution -- two-dimensional tuple with the target network's (spatial)
         input resolution in HW order
         """
         self.yolo_input_resolution = yolo_input_resolution
+        self.offsets=offsets
 
     def process(self, input_image): 
         """Load an image from the specified input path,
@@ -42,9 +43,9 @@ class PreprocessYOLO(object):
         Keyword arguments:
         input_image_path -- string path of the image to be loaded
         """
-        image_raw, image_resized = self._load_and_resize(input_image)
+        image_crop, image_resized = self._load_and_resize(input_image)
         image_preprocessed = self._shuffle_and_normalize(image_resized)
-        return image_raw, image_preprocessed
+        return image_crop, image_preprocessed
 
     def _load_and_resize(self, input_image):
         """Load an image from the specified path and resize it to the input resolution.
@@ -54,19 +55,25 @@ class PreprocessYOLO(object):
         input_image_path -- string path of the image to be loaded
         """
         
-        if input_image.shape[-1] != 3: image_raw = cv2.cvtColor(input_image, cv2.COLOR_GRAY2BGR)
+        off_left, off_right, off_top, off_bottom = self.offsets
+        """ 
+        # The image channel converting process has been done in the MainWindow 
+        if input_image.shape[-1] != 3: 
+            image_raw = cv2.cvtColor(input_image, cv2.COLOR_GRAY2BGR)
         else: image_raw = input_image
-        image_raw = Image.fromarray(image_raw)
+        """
+        
+        # Crop the input image by offsets
+        h, w = input_image.shape[:2]
+        image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
 
         # Expecting yolo_input_resolution in (height, width) format, adjusting to PIL
-        # convention (width, height) in PIL:
+        # convention (width, height) in cv2:
         new_resolution = (
             self.yolo_input_resolution[1],
             self.yolo_input_resolution[0])
-        image_resized = image_raw.resize(
-            new_resolution, resample=Image.BICUBIC)
-        image_resized = np.array(image_resized, dtype=np.float32, order='C')
-        return image_raw, image_resized
+        image_resized = cv2.resize(image_crop, new_resolution, interpolation=cv2.INTER_LINEAR).astype(np.float32)
+        return image_crop, image_resized
 
     def _shuffle_and_normalize(self, image):
         """Normalize a NumPy array representing an image to the range [0, 1], and

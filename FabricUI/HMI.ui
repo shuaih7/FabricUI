@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1272</width>
-    <height>863</height>
+    <width>1091</width>
+    <height>785</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>750</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>布匹缺陷检测UI</string>
@@ -27,25 +33,13 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
-     <number>20</number>
-    </property>
-    <property name="topMargin">
-     <number>20</number>
-    </property>
-    <property name="rightMargin">
-     <number>20</number>
-    </property>
-    <property name="horizontalSpacing">
-     <number>11</number>
-    </property>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,5">
       <property name="spacing">
        <number>20</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="4,3,3,3">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="2,2,3,3,3">
         <property name="spacing">
          <number>15</number>
         </property>
@@ -59,12 +53,12 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>316</width>
-            <height>275</height>
+            <width>280</width>
+            <height>240</height>
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+           <string notr="true"/>
           </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
@@ -73,7 +67,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>icon/logo.jpg</pixmap>
+           <pixmap>icon/HDTech.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -82,6 +76,58 @@
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>icon/pass.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="resetBtn">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+            </property>
+            <property name="text">
+             <string>复位</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>icon/reset.png</normaloff>icon/reset.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QPushButton" name="startBtn">
@@ -197,7 +243,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1272</width>
+     <width>1091</width>
      <height>26</height>
     </rect>
    </property>
@@ -221,7 +267,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>111</x>
-     <y>489</y>
+     <y>477</y>
     </hint>
     <hint type="destinationlabel">
      <x>117</x>
@@ -233,22 +279,22 @@
    <sender>configBtn</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>sysConfig()</slot>
+   <slot>systemConfig()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>283</x>
-     <y>591</y>
+     <y>596</y>
     </hint>
     <hint type="destinationlabel">
      <x>280</x>
-     <y>833</y>
+     <y>750</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
-  <slot>runTestInfer()</slot>
-  <slot>runInfer()</slot>
-  <slot>sysConfig()</slot>
+  <slot>startTestInferring()</slot>
+  <slot>startInferring()</slot>
+  <slot>systemConfig()</slot>
  </slots>
 </ui>

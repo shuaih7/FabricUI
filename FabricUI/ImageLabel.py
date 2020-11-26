@@ -20,14 +20,23 @@ class ImageLabel(QLabel):
         super(ImageLabel, self).__init__(parent)
         self.config_matrix = config_matrix
         self.pixmap = None
+        self.scale = None
         
     def refresh(self, image, boxes=[], labels=[], scores=[]):
-        image = draw_boxes(image, boxes)
+        if self.scale is None: self.getScale(image)
+        image = draw_boxes(image, boxes, scale=self.scale)
+        
         h, w, ch = image.shape
         bytesPerLine = ch*w
         convertToQtFormat = QImage(image.data, w, h, bytesPerLine, QImage.Format_RGB888)
         self.pixmap = QPixmap.fromImage(convertToQtFormat).scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.update()
+        
+    def getScale(self, image):
+        h, w = image.shape[:2]
+        input_h = self.config_matrix["Model"]["input_h"]
+        input_w = self.config_matrix["Model"]["input_w"]
+        self.scale = (h/input_h, w/input_w)
         
     def paintEvent(self, event):
         painter = QPainter(self)

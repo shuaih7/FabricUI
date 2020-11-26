@@ -46,11 +46,11 @@ class MainWindow(QMainWindow):
         self.lighting = None
         self.model = cudaModel(self.config_matrix, self.logger)
         self.configWidget = ConfigWidget(self.config_matrix)
+        self.configWidget.updateCfgSignal.connect(self.updateConfig)
         
         # Initialize the crucial parameters
         self.isRunning = False   # Whether images are showing on the label
         self.isInferring = False # Whether the livestream inference is on
-        self.isInterrupt = False # Whether the livestream is interrupted
         self.logger_flags = {
             "debug":    self.logger.debug,
             "info":     self.logger.info,
@@ -71,6 +71,8 @@ class MainWindow(QMainWindow):
             1. Make sure to stream on the camera before capturing and stream_off before closing the device
             2. The integration is not done here because the camera object device_manager.update_device_list()
                will lose all of its configurations if returned or passed to another function
+        Logics:
+            1. 
         """
         camera_config = self.config_matrix["Camera"]
     
@@ -94,27 +96,30 @@ class MainWindow(QMainWindow):
         try:
             cam = device_manager.open_device_by_sn(SN)
             self.camera = cam
-            self.message("相机连接成功。", flag="info")
-        except Exception as expt:
-            self.message("未连接到相机，请检查相机序列号是否正确并重试。", flag="warning")
-            return
-  
-        # set exposure & gain
-        cam.ExposureTime.set(ExposureTime)
-        cam.Gain.set(Gain)
-        cam.BinningHorizontal.set(Binning)
-        cam.BinningVertical.set(Binning)
+            
+            # set exposure & gain
+            cam.ExposureTime.set(ExposureTime)
+            cam.Gain.set(Gain)
+            cam.BinningHorizontal.set(Binning)
+            cam.BinningVertical.set(Binning)
 
-        # set trigger mode and trigger source
-        # cam.TriggerMode.set(gx.GxSwitchEntry.OFF)
-        cam.TriggerMode.set(gx.GxSwitchEntry.ON)
-        cam.TriggerSource.set(gx.GxTriggerSourceEntry.SOFTWARE)
-        
-        # Set the status to the capturing mode
-        cam.stream_on()
-        self.isRunning = True
-        self.isInterrupt = False
-        if self.isInferring: self.startBtn.setText("停止检测")
+            # set trigger mode and trigger source
+            # cam.TriggerMode.set(gx.GxSwitchEntry.OFF)
+            cam.TriggerMode.set(gx.GxSwitchEntry.ON)
+            cam.TriggerSource.set(gx.GxTriggerSourceEntry.SOFTWARE)
+            
+            # Set the status to the capturing mode
+            cam.stream_on()
+            self.message("相机连接成功。", flag="info")
+            
+            self.isRunning = True
+            self.isInterrupt = False
+            if self.isInferring: self.startBtn.setText("停止检测") # Maintain the inferring status
+            else: self.startBtn.setText("开始检测")
+            
+        except Exception as expt:
+            self.message("未连接到相机，请检查相机序列号是否正确并重试。", flag="error")
+            return
 
         while self.isRunning: 
             try:
@@ -128,15 +133,16 @@ class MainWindow(QMainWindow):
                     if c != 3: image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
 
             except: 
-                self.stopRunning("相机连接中断，请检查链接并重试。", flag="error")
-                self.startBtn.setText("开始检测")
-                self.isInterrupt = True
+                self.interruptStop("相机连接中断，请检查链接并重试。", flag="error")
                 # Todo: stream_off, close device ...
                 return
 
             if self.isInferring:
-                boxes, labels, scores = self.model.infer(image)
-                self.imageLabel.refresh(image,boxes,labels,scores)
+                try:
+                    image, boxes, labels, scores = self.model.infer(image)
+                    self.imageLabel.refresh(image,boxes,labels,scores)
+                except Exception as expt:
+                    self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
             else: 
                 self.imageLabel.refresh(image)
             QApplication.processEvents()
@@ -146,17 +152,20 @@ class MainWindow(QMainWindow):
         cam.close_device()
 
     @pyqtSlot()    
-    def runInfer(self):
-        if self.isInterrupt:
-            self.isInferring = True
+    def startInferring(self):
+        """
+        Start the video thread and run inspection
+        
+        Logics:
+            Case 1. Camera disconnected (interrupted): Restart the livestrea and maintain the infer status
+            Case 2. Camera is running but inspection not running: start inferring
+            Case 3. Camera is running and inspection is running: stop inferring
+        """
+        if not self.isRunning:
             self.liveStream()
-        elif self.camera is None or not self.isRunning: 
-            self.message("相机连接失败，请检查相机设置并重试。", flag="warning")
         else: 
             if self.isInferring: 
-                self.isInferring = False
-                self.message("检测中止。", flag="info")
-                self.startBtn.setText("开始检测")
+                self.stopInferring("检测中止。", flag="info")
             else: 
                 self.isInferring = True
                 self.message("开始检测...", flag="info")
@@ -164,7 +173,7 @@ class MainWindow(QMainWindow):
                 
     """         
     @pyqtSlot()    
-    def runTestInfer(self):
+    def startTestInferring(self):
         if self.isRunning:
             self.stopRunning("正在结束当前检测...\n请再次点击开始测试检测。", flag="info")  
         else:
@@ -187,13 +196,39 @@ class MainWindow(QMainWindow):
     """
     
     @pyqtSlot()
-    def sysConfig(self):
+    def systemConfig(self):
         self.configWidget.show()
-
-    def stopRunning(self, msg="", flag="info"):
-        self.isRunning = False
+        
+    @pyqtSlot()
+    def reset(self):
+        pass
+        
+    @pyqtSlot(dict)
+    def updateConfig(self, cfg_matrix):
+        """
+        Receive the config_matrix from ConfigWidget and update the configurations
+        
+        Logics:
+            1. recevie the configs and apply to the current devices
+            2. if reports error, then use the previous configurations; else update the self.config_matrix
+        """
+        self.config_matrix = cfg_matrix
+        
+    def stopInferring(self, msg=None, flag="info"):
         self.isInferring = False
-        self.message(msg, flag=flag)
+        self.startBtn.setText("开始检测")
+        if msg is not None: self.message(msg, flag=flag)
+
+    def stopRunning(self, msg=None, flag="info"):
+        self.isRunning = False
+        self.isInferring = False、
+        self.startBtn.setText("开始检测")
+        if msg is not None: self.message(msg, flag=flag)
+        
+    def interruptStop(self, msg=None, flag="error"):
+        self.isRunning = False
+        self.startBtn.setText("连接相机")
+        if msg is not None: self.message(msg, flag=flag)
         
     def message(self, msg, flag="info"): 
         self.logger_flags[flag](msg)
