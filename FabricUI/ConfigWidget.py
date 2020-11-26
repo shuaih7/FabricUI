@@ -11,7 +11,7 @@ Author: haoshuai@handaotech.com
 import os, sys, json
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIntValidator
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QTabWidget, QFileDialog
 
 abs_path = os.path.abspath(os.path.dirname(__file__))
@@ -19,13 +19,20 @@ sys.path.append(abs_path)
 
 
 class ConfigWidget(QTabWidget):
-    updateCfgSignal = pyqtSignal(dict)
+    generalCfgSignal = pyqtSignal(dict)
+    cameraCfgSignal = pyqtSignal(dict)
+    lightCfgSignal = pyqtSignal(dict)
+    modelCfgSignal = pyqtSignal(dict)
     
     def __init__(self, config_matrix):
         super(ConfigWidget, self).__init__()
         loadUi(os.path.join(os.path.abspath(os.path.dirname(__file__)), "ConfigWidget.ui"), self)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.config_matrix = config_matrix
+        
+        # Load the general configurations
+        self.setSaveMode(config_matrix["save_mode"])
+        self.saveDirLine.setText(config_matrix["save_dir"])
         
         # Load the current camera configurations
         self.snLine.setText(str(config_matrix["Camera"]["DeviceSerialNumber"]))
@@ -52,30 +59,89 @@ class ConfigWidget(QTabWidget):
         self.nmsLine.setText(str(config_matrix["Model"]["nms_threshold"]))
         
     @pyqtSlot()    
-    def save(self):
-        # Save the camera configurations
-        self.config_matrix["Camera"]["DeviceSerialNumber"] = int(self.snLine.text)
-        self.config_matrix["Camera"]["ExposureTime"] = int(self.exposeLine.text)
-        self.config_matrix["Camera"]["Gain"] = int(self.gainLine.text)
-        self.config_matrix["Camera"]["Binning"] = int(self.binningLine.text)
+    def generalConfig(self):
+        self.config_matrix["save_mode"] = self.getSaveMode()
+        self.config_matrix["save_dir"] = self.saveDirLine.text()
+    
+        self.generalCfgSignal.emit(self.config_matrix)
+        self.saveConfig()
         
+    @pyqtSlot()    
+    def cameraConfig(self):
+        # Save the camera configurations
+        self.config_matrix["Camera"]["DeviceSerialNumber"] = self.snLine.text()
+        self.config_matrix["Camera"]["ExposureTime"] = int(self.exposeLine.text())
+        self.config_matrix["Camera"]["Gain"] = int(self.gainLine.text())
+        self.config_matrix["Camera"]["Binning"] = int(self.binningLine.text())
+        
+        self.cameraCfgSignal.emit(self.config_matrix)
+        self.saveConfig()
+    
+    @pyqtSlot()    
+    def lightConfig(self):    
         # Save the lighting configurations
         # ......
-        
+        self.lightCfgSignal.emit(self.config_matrix)
+        self.saveConfig()
+    
+    @pyqtSlot()    
+    def modelConfig(self):    
         # Save the model configurations
-        off_left = int(self.offLeftLine.text)
-        off_right = int(self.offRightLine.text)
-        off_top = int(self.offTopLine.text)
-        off_bottom = int(self.offBottomLine.text)
+        off_left = int(self.offLeftLine.text())
+        off_right = int(self.offRightLine.text())
+        off_top = int(self.offTopLine.text())
+        off_bottom = int(self.offBottomLine.text())
         self.config_matrix["Model"]["offsets"] = [off_left, off_right, off_top, off_bottom]
-        self.config_matrix["Model"]["input_w"] = int(self.widthLine.text)
-        self.config_matrix["Model"]["input_h"] = int(self.heightLine.text)
-        self.config_matrix["Model"]["obj_threshold"] = int(self.threshLine.text)
-        self.config_matrix["Model"]["nms_threshold"] = int(self.nmsLine.text)
+        self.config_matrix["Model"]["input_w"] = int(self.widthLine.text())
+        self.config_matrix["Model"]["input_h"] = int(self.heightLine.text())
+        self.config_matrix["Model"]["obj_threshold"] = float(self.threshLine.text())
+        self.config_matrix["Model"]["nms_threshold"] = float(self.nmsLine.text())
         
+        self.modelCfgSignal.emit(self.config_matrix)
+        self.saveConfig()
+    
+    @pyqtSlot()    
+    def setSaveDir(self):
+        save_dir = QFileDialog.getExistingDirectory()
+        self.saveDirLine.setText(save_dir)
+        
+    def setSaveMode(self, mode=0):
+        """
+        Set the save mode: 0 for not saving, 1 for saving all, 2 for saving the defect images
+        """
+        if mode == 1: 
+            self.saveAllBtn.setChecked(True)
+            self.saveDefBtn.setChecked(False)
+        elif mode == 2: 
+            self.saveAllBtn.setChecked(False)
+            self.saveDefBtn.setChecked(True)
+            
+    def getSaveMode(self):
+        mode = 0
+        if self.saveDefBtn.isChecked(): mode = 2
+        elif self.saveAllBtn.isChecked(): mode = 1
+        
+        return mode
+    
+    @pyqtSlot()    
+    def setSaveAll(self):
+        if self.saveAllBtn.isChecked(): self.setSaveMode(1)
+        else: self.setSaveMode(0)
+    
+    @pyqtSlot()
+    def setSaveDefect(self):
+        if self.saveDefBtn.isChecked(): self.setSaveMode(2)
+        else: self.setSaveMode(0)
+       
+    @pyqtSlot()
+    def exitConfig(self):
+        self.close()
+    
+    def saveConfig(self):
         json_file = os.path.join(abs_path, "config.json")
         with open(json_file, "w", encoding="utf-8") as f:
             cfg_obj = json.dumps(self.config_matrix, indent=4)
             f.write(cfg_obj)
             f.close()
-        self.updateCfgSignal.emit(self.config_matrix)
+            
+    

@@ -57,7 +57,7 @@ def resize_image(img_file, save_name, size=(100,100)):
 
 if __name__ == "__main__":
     #create_background((352,352))
-    img_file = r"C:\Users\shuai\Documents\GitHub\FabricUI\FabricUI\icon\warning.png"
-    save_name = r"C:\Users\shuai\Documents\GitHub\FabricUI\FabricUI\icon\warning.png"
+    img_file = r"C:\Users\shuai\Documents\GitHub\FabricUI\FabricUI\icon\folder.jpg"
+    save_name = r"C:\Users\shuai\Documents\GitHub\FabricUI\FabricUI\icon\folder_icon.png"
     #resize_image(img_file, save_name)
     transparent_background(img_file, save_name)

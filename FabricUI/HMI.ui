@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>785</height>
+    <width>1124</width>
+    <height>788</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -34,13 +34,25 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,5">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4">
       <property name="spacing">
        <number>20</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="2,2,3,3,3">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="8,4,1,4,4,6">
         <property name="spacing">
+         <number>15</number>
+        </property>
+        <property name="leftMargin">
+         <number>15</number>
+        </property>
+        <property name="topMargin">
+         <number>15</number>
+        </property>
+        <property name="rightMargin">
+         <number>15</number>
+        </property>
+        <property name="bottomMargin">
          <number>15</number>
         </property>
         <item>
@@ -70,7 +82,7 @@
            <pixmap>icon/HDTech.png</pixmap>
           </property>
           <property name="scaledContents">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -81,6 +93,12 @@
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QLabel" name="label">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>150</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -109,8 +127,14 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>80</height>
+             </size>
+            </property>
             <property name="styleSheet">
-             <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+             <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
             </property>
             <property name="text">
              <string>复位</string>
@@ -125,9 +149,25 @@
               <height>30</height>
              </size>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QPushButton" name="startBtn">
@@ -156,6 +196,9 @@
             <height>27</height>
            </size>
           </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -181,6 +224,9 @@
             <width>30</width>
             <height>30</height>
            </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -213,6 +259,15 @@
         <property name="spacing">
          <number>8</number>
         </property>
+        <property name="topMargin">
+         <number>20</number>
+        </property>
+        <property name="rightMargin">
+         <number>20</number>
+        </property>
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
         <item>
          <widget class="ImageLabel" name="imageLabel">
           <property name="styleSheet">
@@ -243,7 +298,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1091</width>
+     <width>1124</width>
      <height>26</height>
     </rect>
    </property>
@@ -260,22 +315,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>startBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>runInfer()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>111</x>
-     <y>477</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>668</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>configBtn</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
@@ -283,11 +322,43 @@
    <hints>
     <hint type="sourcelabel">
      <x>283</x>
-     <y>596</y>
+     <y>585</y>
     </hint>
     <hint type="destinationlabel">
      <x>280</x>
      <y>750</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>151</x>
+     <y>787</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>startBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>startInferring()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>502</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>97</x>
+     <y>647</y>
     </hint>
    </hints>
   </connection>
@@ -296,5 +367,6 @@
   <slot>startTestInferring()</slot>
   <slot>startInferring()</slot>
   <slot>systemConfig()</slot>
+  <slot>reset()</slot>
  </slots>
 </ui>

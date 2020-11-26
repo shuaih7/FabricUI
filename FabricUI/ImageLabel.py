@@ -16,11 +16,14 @@ from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen
 from utils import draw_boxes
 
 class ImageLabel(QLabel):
-    def __init__(self, config_matrix, parent=None):
+    def __init__(self, parent=None):
         super(ImageLabel, self).__init__(parent)
-        self.config_matrix = config_matrix
+        self.config_matrix = None
         self.pixmap = None
         self.scale = None
+        
+    def setConfig(self, config_matrix):
+        self.config_matrix = config_matrix
         
     def refresh(self, image, boxes=[], labels=[], scores=[]):
         if self.scale is None: self.getScale(image)

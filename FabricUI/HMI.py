@@ -39,14 +39,20 @@ class MainWindow(QMainWindow):
         config_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "config.json")
         with open (config_file, "r") as f: 
             self.config_matrix = json.load(f)
+        self.imageLabel.setConfig(self.config_matrix)
         
         # Config the devices
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), log_name="logging.log")
         self.camera = None
         self.lighting = None
         self.model = cudaModel(self.config_matrix, self.logger)
+        
+        # Define the system configuration widget
         self.configWidget = ConfigWidget(self.config_matrix)
-        self.configWidget.updateCfgSignal.connect(self.updateConfig)
+        self.configWidget.generalCfgSignal.connect(self.generalConfig)
+        self.configWidget.cameraCfgSignal.connect(self.cameraConfig)
+        self.configWidget.lightCfgSignal.connect(self.lightConfig)
+        self.configWidget.modelCfgSignal.connect(self.modelConfig)
         
         # Initialize the crucial parameters
         self.isRunning = False   # Whether images are showing on the label
@@ -118,6 +124,7 @@ class MainWindow(QMainWindow):
             else: self.startBtn.setText("开始检测")
             
         except Exception as expt:
+            self.startBtn.setText("连接相机")
             self.message("未连接到相机，请检查相机序列号是否正确并重试。", flag="error")
             return
 
@@ -204,15 +211,37 @@ class MainWindow(QMainWindow):
         pass
         
     @pyqtSlot(dict)
-    def updateConfig(self, cfg_matrix):
+    def generalConfig(self, cfg_matrix):
         """
-        Receive the config_matrix from ConfigWidget and update the configurations
-        
-        Logics:
-            1. recevie the configs and apply to the current devices
-            2. if reports error, then use the previous configurations; else update the self.config_matrix
+        Receive the config_matrix from ConfigWidget, update the config_matrix, and update general configurations
         """
         self.config_matrix = cfg_matrix
+        
+    @pyqtSlot(dict)
+    def cameraConfig(self, cfg_matrix):
+        """
+        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the camera
+        """
+        self.config_matrix = cfg_matrix
+        self.stopRunning(msg="更新相机配置，正在重启相机...", flag="info")
+        self.liveStream()
+        
+    @pyqtSlot(dict)
+    def lightConfig(self, cfg_matrix):
+        """
+        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the light       
+        """
+        self.config_matrix = cfg_matrix
+        
+    @pyqtSlot(dict)
+    def modelConfig(self, cfg_matrix):
+        """
+        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the model
+        """
+        self.config_matrix = cfg_matrix
+        self.stopInferring(msg="更新相机配置，正在重启模型...", flag="info")
+        self.model = cudaModel(self.config_matrix, self.logger)
+        self.message("模型配置完成，请点击“开始检测”按钮以开始布匹的检测。")
         
     def stopInferring(self, msg=None, flag="info"):
         self.isInferring = False
@@ -221,7 +250,7 @@ class MainWindow(QMainWindow):
 
     def stopRunning(self, msg=None, flag="info"):
         self.isRunning = False
-        self.isInferring = False、
+        self.isInferring = False
         self.startBtn.setText("开始检测")
         if msg is not None: self.message(msg, flag=flag)
         
