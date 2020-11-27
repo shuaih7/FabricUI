@@ -184,7 +184,7 @@
            <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
           </property>
           <property name="text">
-           <string>开始检测</string>
+           <string>连接相机</string>
           </property>
           <property name="icon">
            <iconset>

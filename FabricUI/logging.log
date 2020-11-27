@@ -126,3 +126,26 @@
 2020-11-23 17:10:15,749 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
 2020-11-23 17:20:06,651 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
 2020-11-23 17:59:35,822 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-27 11:10:32,286 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-27 11:10:32,445 - HMI.py[line:281] - INFO: 
+FabricUI 已开启。
+2020-11-27 11:10:32,713 - HMI.py[line:281] - INFO: 搜寻到相机，连接中...
+2020-11-27 11:10:33,666 - HMI.py[line:281] - INFO: 相机连接成功。
+2020-11-27 11:10:35,910 - HMI.py[line:281] - INFO: 开始检测...
+2020-11-27 11:10:35,990 - HMI.py[line:281] - ERROR: 模型无法运行，请检查模型参数并重试。
+2020-11-27 11:10:39,295 - HMI.py[line:281] - INFO: 开始检测...
+2020-11-27 11:10:39,379 - HMI.py[line:281] - ERROR: 模型无法运行，请检查模型参数并重试。
+2020-11-27 11:10:40,674 - HMI.py[line:281] - INFO: 开始检测...
+2020-11-27 11:10:40,775 - HMI.py[line:281] - ERROR: 模型无法运行，请检查模型参数并重试。
+2020-11-27 11:10:41,475 - HMI.py[line:281] - INFO: 开始检测...
+2020-11-27 11:10:41,577 - HMI.py[line:281] - ERROR: 模型无法运行，请检查模型参数并重试。
+2020-11-27 11:11:00,311 - HMI.py[line:281] - INFO: FabricUI 已关闭。
+
+2020-11-27 11:14:26,399 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-11-27 11:14:26,562 - HMI.py[line:280] - INFO: 
+FabricUI 已开启。
+2020-11-27 11:14:26,831 - HMI.py[line:280] - INFO: 搜寻到相机，连接中...
+2020-11-27 11:14:27,795 - HMI.py[line:280] - INFO: 相机连接成功。
+2020-11-27 11:14:29,432 - HMI.py[line:280] - INFO: 开始检测...
+2020-11-27 11:14:54,407 - HMI.py[line:280] - INFO: FabricUI 已关闭。
+

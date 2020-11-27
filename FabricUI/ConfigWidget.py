@@ -31,6 +31,7 @@ class ConfigWidget(QTabWidget):
         self.config_matrix = config_matrix
         
         # Load the general configurations
+        self.save_mode = config_matrix["save_mode"]
         self.setSaveMode(config_matrix["save_mode"])
         self.saveDirLine.setText(config_matrix["save_dir"])
         
@@ -109,12 +110,17 @@ class ConfigWidget(QTabWidget):
         """
         Set the save mode: 0 for not saving, 1 for saving all, 2 for saving the defect images
         """
+        self.save_mode = mode
+        
         if mode == 1: 
             self.saveAllBtn.setChecked(True)
             self.saveDefBtn.setChecked(False)
         elif mode == 2: 
             self.saveAllBtn.setChecked(False)
             self.saveDefBtn.setChecked(True)
+        else:
+            self.saveAllBtn.setChecked(False)
+            self.saveDefBtn.setChecked(False)
             
     def getSaveMode(self):
         mode = 0
@@ -125,13 +131,13 @@ class ConfigWidget(QTabWidget):
     
     @pyqtSlot()    
     def setSaveAll(self):
-        if self.saveAllBtn.isChecked(): self.setSaveMode(1)
-        else: self.setSaveMode(0)
+        if self.save_mode == 1: self.setSaveMode(0)
+        else: self.setSaveMode(1)
     
     @pyqtSlot()
     def setSaveDefect(self):
-        if self.saveDefBtn.isChecked(): self.setSaveMode(2)
-        else: self.setSaveMode(0)
+        if self.save_mode == 2: self.setSaveMode(0)
+        else: self.setSaveMode(2)
        
     @pyqtSlot()
     def exitConfig(self):

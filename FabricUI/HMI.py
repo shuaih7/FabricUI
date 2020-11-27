@@ -64,10 +64,9 @@ class MainWindow(QMainWindow):
             "error":    self.logger.error,
             "critical": self.logger.critical}
 
-        #self.showMaximized()
+        self.checkSaveStatus()
         self.message("\nFabricUI 已开启。", flag="info")
-        #self.liveStream() # Livestream while openning the app
-
+    
     def liveStream(self):
         """
         Re-config the camera when the liveStream function is called
@@ -80,6 +79,7 @@ class MainWindow(QMainWindow):
         Logics:
             1. 
         """
+        # self.startBtn.setText("连接相机")
         camera_config = self.config_matrix["Camera"]
     
         # Fetch the config parameters
@@ -148,6 +148,7 @@ class MainWindow(QMainWindow):
                 try:
                     image, boxes, labels, scores = self.model.infer(image)
                     self.imageLabel.refresh(image,boxes,labels,scores)
+                    self.save(image, boxes, labels, scores)
                 except Exception as expt:
                     self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
             else: 
@@ -216,6 +217,8 @@ class MainWindow(QMainWindow):
         Receive the config_matrix from ConfigWidget, update the config_matrix, and update general configurations
         """
         self.config_matrix = cfg_matrix
+        self.checkSaveStatus()
+        self.message("已更新常规设置。")
         
     @pyqtSlot(dict)
     def cameraConfig(self, cfg_matrix):
@@ -258,6 +261,20 @@ class MainWindow(QMainWindow):
         self.isRunning = False
         self.startBtn.setText("连接相机")
         if msg is not None: self.message(msg, flag=flag)
+        
+    def checkSaveStatus(self):
+        if self.config_matrix["save_mode"] not in [0, 1, 2]:
+            raise ValueError("Invalid save mode.")
+        else: self.save_mode = self.config_matrix["save_mode"]
+
+        if not os.path.exists(self.config_matrix["save_dir"]):
+            os.mkdir(self.config_matrix["save_dir"])
+        else: self.save_dir = self.config_matrix["save_dir"]
+        
+    def save(self, image, boxes, labels, scores):
+        if self.save_mode == 0: return
+        elif self.save_mode == 1: pass
+        elif self.save_mode == 2: pass
         
     def message(self, msg, flag="info"): 
         self.logger_flags[flag](msg)

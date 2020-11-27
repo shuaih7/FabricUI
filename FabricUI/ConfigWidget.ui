@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>632</width>
-    <height>450</height>
+    <height>451</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -86,14 +86,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="saveAllBtn">
+         <widget class="QCheckBox" name="saveAllBtn">
           <property name="text">
            <string>全部存储</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="saveDefBtn">
+         <widget class="QCheckBox" name="saveDefBtn">
           <property name="text">
            <string>仅存储缺陷</string>
           </property>
@@ -1347,38 +1347,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>saveAllBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>TabWidget</receiver>
-   <slot>setSaveAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>288</x>
-     <y>143</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>281</x>
-     <y>292</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saveDefBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>TabWidget</receiver>
-   <slot>setSaveDefect()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>488</x>
-     <y>134</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>464</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>generalExitBtn</sender>
    <signal>clicked()</signal>
    <receiver>TabWidget</receiver>
@@ -1390,7 +1358,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
-     <y>474</y>
+     <y>450</y>
     </hint>
    </hints>
   </connection>
@@ -1422,7 +1390,39 @@
     </hint>
     <hint type="destinationlabel">
      <x>433</x>
-     <y>475</y>
+     <y>450</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveAllBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>TabWidget</receiver>
+   <slot>setSaveAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>286</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveDefBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>TabWidget</receiver>
+   <slot>setSaveDefect()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>459</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>422</x>
+     <y>315</y>
     </hint>
    </hints>
   </connection>
