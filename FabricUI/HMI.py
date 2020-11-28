@@ -106,8 +106,10 @@ class MainWindow(QMainWindow):
             # set exposure & gain
             cam.ExposureTime.set(ExposureTime)
             cam.Gain.set(Gain)
-            cam.BinningHorizontal.set(Binning)
-            cam.BinningVertical.set(Binning)
+            try: # Because some DH cameras do not support "binning"
+                cam.BinningHorizontal.set(Binning)
+                cam.BinningVertical.set(Binning)
+            except: pass
 
             # set trigger mode and trigger source
             # cam.TriggerMode.set(gx.GxSwitchEntry.OFF)

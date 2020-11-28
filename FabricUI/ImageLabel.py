@@ -26,12 +26,12 @@ class ImageLabel(QLabel):
         self.config_matrix = config_matrix
         
     def refresh(self, image, boxes=[], labels=[], scores=[]):
-        if self.scale is None: self.getScale(image)
+        self.getScale(image)
         image = draw_boxes(image, boxes, scale=self.scale)
         
         h, w, ch = image.shape
         bytesPerLine = ch*w
-        convertToQtFormat = QImage(image.data, w, h, bytesPerLine, QImage.Format_RGB888)
+        convertToQtFormat = QImage(image.data.tobytes(), w, h, bytesPerLine, QImage.Format_RGB888)
         self.pixmap = QPixmap.fromImage(convertToQtFormat).scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.update()
         

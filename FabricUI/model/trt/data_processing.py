@@ -36,18 +36,18 @@ class PreprocessYOLO(object):
         self.yolo_input_resolution = yolo_input_resolution
         self.offsets=offsets
 
-    def process(self, input_image): 
+    def process(self, input_image, mode="auto"): 
         """Load an image from the specified input path,
         and return it together with a pre-processed version required for feeding it into a
         YOLOv3 network.
         Keyword arguments:
         input_image_path -- string path of the image to be loaded
         """
-        image_crop, image_resized = self._load_and_resize(input_image)
+        image_crop, image_resized = self._load_and_resize(input_image, mode=mode)
         image_preprocessed = self._shuffle_and_normalize(image_resized)
         return image_crop, image_preprocessed
 
-    def _load_and_resize(self, input_image):
+    def _load_and_resize(self, input_image, mode="auto"):
         """Load an image from the specified path and resize it to the input resolution.
         Return the input image before resizing as a PIL Image (required for visualization),
         and the resized image as a NumPy float array.
@@ -55,24 +55,31 @@ class PreprocessYOLO(object):
         input_image_path -- string path of the image to be loaded
         """
         
-        off_left, off_right, off_top, off_bottom = self.offsets
-        """ 
-        # The image channel converting process has been done in the MainWindow 
-        if input_image.shape[-1] != 3: 
-            image_raw = cv2.cvtColor(input_image, cv2.COLOR_GRAY2BGR)
-        else: image_raw = input_image
-        """
-        
-        # Crop the input image by offsets
-        h, w = input_image.shape[:2]
-        image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
+        if mode == "auto":
+            h, w = input_image.shape[:2]
+            offh, offw = 0, 0
+            if h > w: offh = int((h-w)/2)
+            else: offw = int((w-h)/2)
+            image_crop = input_image[offh:h-offh, offw:w-offw, :]
+        else: 
+            off_left, off_right, off_top, off_bottom = self.offsets
+          
+            # Crop the input image by offsets
+            h, w = input_image.shape[:2]
+            image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
 
         # Expecting yolo_input_resolution in (height, width) format, adjusting to PIL
         # convention (width, height) in cv2:
         new_resolution = (
             self.yolo_input_resolution[1],
             self.yolo_input_resolution[0])
-        image_resized = cv2.resize(image_crop, new_resolution, interpolation=cv2.INTER_LINEAR).astype(np.float32)
+            
+        image_resized = Image.fromarray(image_crop)
+        image_resized = image_resized.resize(new_resolution, resample=Image.BILINEAR)
+        image_resized = np.array(image_resized)
+        
+        # Do not use cv2.resize since it will create some unknown features while squeezing the iamge size
+        # image_resized = cv2.resize(image_crop, new_resolution, interpolation=cv2.INTER_LINEAR).astype(np.float32)
         return image_crop, image_resized
 
     def _shuffle_and_normalize(self, image):

@@ -28,7 +28,7 @@
    <string notr="true">font-size: 20px;height: 30px;width: 80px; </string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>3</number>
   </property>
   <widget class="QWidget" name="generalTab">
    <attribute name="icon">
@@ -820,6 +820,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="offLeftLine">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -853,6 +856,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="offRightLine">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -903,6 +909,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="offTopLine">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -936,6 +945,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="offBottomLine">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>

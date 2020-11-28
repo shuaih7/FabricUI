@@ -92,7 +92,7 @@ class cudaModel(object):
 
         # Config the pre-processor arguments. Two-dimensional tuple with the target network's (spatial) input resolution in HW ordered 
         input_resolution_yolov3_HW = (config_matrix["Model"]["input_h"], config_matrix["Model"]["input_w"])
-        self.preprocessor = PreprocessYOLO(input_resolution_yolov3_HW)
+        self.preprocessor = PreprocessYOLO(input_resolution_yolov3_HW, offsets=[0,0,0,0]) #offsets=config_matrix["Model"]["offsets"])
 
         # Load an image from the specified input path, and return it together with  a pre-processed version
         # image_raw, image = preprocessor.process(input_image_path)
