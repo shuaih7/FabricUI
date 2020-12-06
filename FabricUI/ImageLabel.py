@@ -35,6 +35,8 @@ class ImageLabel(QLabel):
         self.pixmap = QPixmap.fromImage(convertToQtFormat).scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.update()
         
+        return image, boxes, labels, scores
+        
     def getScale(self, image):
         h, w = image.shape[:2]
         input_h = self.config_matrix["Model"]["input_h"]

@@ -8,7 +8,7 @@ Updated on 11.24.2020
 Author: haoshaui@handaotech.com
 '''
 
-import os, sys, cv2
+import os, sys, cv2, datetime
 import json, time
 import numpy as np
 import glob as gb
@@ -147,12 +147,12 @@ class MainWindow(QMainWindow):
                 return
 
             if self.isInferring:
-                try:
-                    image, boxes, labels, scores = self.model.infer(image)
-                    self.imageLabel.refresh(image,boxes,labels,scores)
-                    self.save(image, boxes, labels, scores)
-                except Exception as expt:
-                    self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
+                #try:
+                image, boxes, labels, scores = self.model.infer(image)
+                image, boxes, labels, scores = self.imageLabel.refresh(image,boxes,labels,scores)
+                self.save(image, boxes, labels, scores)
+                #except Exception as expt:
+                #    self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
             else: 
                 self.imageLabel.refresh(image)
             QApplication.processEvents()
@@ -275,8 +275,14 @@ class MainWindow(QMainWindow):
         
     def save(self, image, boxes, labels, scores):
         if self.save_mode == 0: return
-        elif self.save_mode == 1: pass
-        elif self.save_mode == 2: pass
+        
+        save_name = os.path.join(self.save_dir, datetime.datetime.now()+".png")
+        
+        if self.save_mode == 1: # Save all
+            cv2.imwrite(save_name, image)
+            
+        elif self.save_mode == 2: # Only save the defect image
+            if len(boxes) > 0: cv2.imwrite(save_name, image)
         
     def message(self, msg, flag="info"): 
         self.logger_flags[flag](msg)

@@ -51,7 +51,7 @@
         "nms_threshold": 0.2
     },
     "save_mode": 0,
-    "save_dir": "/home/nvidia/Documents/Results",
+    "save_dir": "/home/taoli/Documents",
     "max_save_num": 1000,
     "max_folder_save_num": 100,
     "valid_dir": "/home/nvidia/Documents/Projects/Fabric_defect_detection/YOLO/valid",
