@@ -34,6 +34,9 @@ class ConfigWidget(QTabWidget):
         self.save_mode = config_matrix["save_mode"]
         self.setSaveMode(config_matrix["save_mode"])
         self.saveDirLine.setText(config_matrix["save_dir"])
+        self.pinLine.setText(str(config_matrix["Pattern"]["input_pin"]))
+        self.revNumLine.setText(str(config_matrix["Pattern"]["steady_turns"]))
+        self.revOffsetLine.setText(str(config_matrix["Pattern"]["steady_offset"]))
         
         # Load the current camera configurations
         self.snLine.setText(str(config_matrix["Camera"]["DeviceSerialNumber"]))
@@ -63,6 +66,9 @@ class ConfigWidget(QTabWidget):
     def generalConfig(self):
         self.config_matrix["save_mode"] = self.getSaveMode()
         self.config_matrix["save_dir"] = self.saveDirLine.text()
+        self.config_matrix["Pattern"]["input_pin"] = int(self.pinLine.text())
+        self.config_matrix["Pattern"]["steady_turns"] = int(self.revNumLine.text())
+        self.config_matrix["Pattern"]["steady_offset"] = float(self.revOffsetLine.text())
     
         self.generalCfgSignal.emit(self.config_matrix)
         self.saveConfig()

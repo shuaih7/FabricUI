@@ -34,8 +34,8 @@ class ImageLabel(QLabel):
         convertToQtFormat = QImage(image.data.tobytes(), w, h, bytesPerLine, QImage.Format_RGB888)
         self.pixmap = QPixmap.fromImage(convertToQtFormat).scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.update()
-        
-        return image, boxes, labels, scores
+
+	#return images, boxes, labels, scores
         
     def getScale(self, image):
         h, w = image.shape[:2]

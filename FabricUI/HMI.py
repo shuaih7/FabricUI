@@ -3,30 +3,35 @@
 
 '''
 Created on 11.19.2020
-Updated on 11.24.2020
+Updated on 12.31.2020
 
 Author: haoshaui@handaotech.com
 '''
 
-import os, sys, cv2, datetime
-import json, time
+import os
+import sys
+import cv2
+import datetime
+import json
+import time
 import numpy as np
 import glob as gb
 
 abs_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(abs_path)
 
-from third_party import gxipy as gx
-from log import getLogger
-from model import cudaModel
-from utils import draw_boxes
-from ConfigWidget import ConfigWidget
-
 from PyQt5.uic import loadUi
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QEvent, QSize
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
+
+from third_party import gxipy as gx
+from log import getLogger
+from model import cudaModel
+from utils import draw_boxes
+from Workers import revWorker
+from ConfigWidget import ConfigWidget
 
 
 class MainWindow(QMainWindow):
@@ -53,6 +58,16 @@ class MainWindow(QMainWindow):
         self.configWidget.cameraCfgSignal.connect(self.cameraConfig)
         self.configWidget.lightCfgSignal.connect(self.lightConfig)
         self.configWidget.modelCfgSignal.connect(self.modelConfig)
+        
+        # Initialize the pattern study and define the revolution monitor thread
+        self.rev = 0
+        self.revQueue = list()
+        self.revSteady = False
+        self.revNum = max(1, self.config_matrix["Pattern"]["steady_turns"])
+        self.revOffset = max(0.0, self.config_matrix["Pattern"]["steady_offset"])
+        self.revThread = revWorker(self.config_matrix, self.logger)
+        self.revThread.revSignal.connect(self.revReceiver)
+        self.revThread.start()
         
         # Initialize the crucial parameters
         self.isRunning = False   # Whether images are showing on the label
@@ -149,7 +164,7 @@ class MainWindow(QMainWindow):
             if self.isInferring:
                 #try:
                 image, boxes, labels, scores = self.model.infer(image)
-                image, boxes, labels, scores = self.imageLabel.refresh(image,boxes,labels,scores)
+                self.imageLabel.refresh(image,boxes,labels,scores)
                 self.save(image, boxes, labels, scores)
                 #except Exception as expt:
                 #    self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
@@ -160,6 +175,9 @@ class MainWindow(QMainWindow):
         # Make sure to stop the steam and close the device before exit
         cam.stream_off()
         cam.close_device()
+        
+    def patternStudy(self):
+        pass
 
     @pyqtSlot()    
     def startInferring(self):
@@ -205,6 +223,12 @@ class MainWindow(QMainWindow):
             self.testBtn.setText("开始测试")
     """
     
+    @pyqtSlot(float)
+    def revReceiver(self, rev):
+        self.rev = rev
+        self.revLabel.setText(str(rev))
+        self.checkRevStatus()
+    
     @pyqtSlot()
     def systemConfig(self):
         self.configWidget.show()
@@ -219,6 +243,8 @@ class MainWindow(QMainWindow):
         Receive the config_matrix from ConfigWidget, update the config_matrix, and update general configurations
         """
         self.config_matrix = cfg_matrix
+        self.revNum = max(1, cfg_matrix["Pattern"]["steady_turns"])
+        self.revOffset = max(0.0, cfg_matrix["Pattern"]["steady_offset"])
         self.checkSaveStatus()
         self.message("已更新常规设置。")
         
@@ -264,6 +290,24 @@ class MainWindow(QMainWindow):
         self.startBtn.setText("连接相机")
         if msg is not None: self.message(msg, flag=flag)
         
+    def checkRevStatus(self):
+        if len(self.revQueue) == 0: 
+            self.revQueue.append(self.rev)
+            self.revSteady = False
+        else:
+            rev_a = sum(self.revQueue) / len(self.revQueue) # Averaged revolution
+            
+            if abs(self.rev - rev_a) <= self.revOffset: 
+                if len(self.revQueue) < self.revNum:
+                    self.revQueue.append(self.rev)
+                else: # len(self.revQueue) == self.revNum
+                    self.revQueue.pop(0)
+                    self.revQueue.append(self.rev)
+                    self.revSteady = True
+            else:
+                self.revQueue = list()
+                self.revSteady = False
+                
     def checkSaveStatus(self):
         if self.config_matrix["save_mode"] not in [0, 1, 2]:
             raise ValueError("Invalid save mode.")
@@ -276,7 +320,7 @@ class MainWindow(QMainWindow):
     def save(self, image, boxes, labels, scores):
         if self.save_mode == 0: return
         
-        save_name = os.path.join(self.save_dir, datetime.datetime.now()+".png")
+        save_name = os.path.join(self.save_dir, datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f')+".png")
         
         if self.save_mode == 1: # Save all
             cv2.imwrite(save_name, image)
@@ -300,6 +344,7 @@ class MainWindow(QMainWindow):
             #if self.isInferring: self.isInferring = False
             #if self.isRunning: self.isRunning = False
             self.message("FabricUI 已关闭。\n", flag="info")
+            self.revThread.exit()
             sys.exit()
             #ev.accept()
         else: ev.ignore()

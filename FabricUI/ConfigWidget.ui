@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>451</height>
+    <width>661</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,7 +28,7 @@
    <string notr="true">font-size: 20px;height: 30px;width: 80px; </string>
   </property>
   <property name="currentIndex">
-   <number>3</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="generalTab">
    <attribute name="icon">
@@ -40,7 +40,7 @@
    </attribute>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,1,1,3,1">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,2,2,2,2,2">
       <property name="leftMargin">
        <number>10</number>
       </property>
@@ -53,6 +53,71 @@
       <property name="bottomMargin">
        <number>10</number>
       </property>
+      <item>
+       <widget class="QLabel" name="label_22">
+        <property name="styleSheet">
+         <string notr="true">font: bold;</string>
+        </property>
+        <property name="text">
+         <string>模式学习</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="3,2,3,2,3,2">
+        <item>
+         <widget class="QLabel" name="label_25">
+          <property name="text">
+           <string>输入PIN值</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="pinLine">
+          <property name="styleSheet">
+           <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_26">
+          <property name="text">
+           <string>稳定圈数</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="revNumLine">
+          <property name="styleSheet">
+           <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_27">
+          <property name="text">
+           <string>圈速误差</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="revOffsetLine">
+          <property name="styleSheet">
+           <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item>
        <widget class="QLabel" name="label_19">
         <property name="styleSheet">
@@ -102,7 +167,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="2,3,10,1,1">
+       <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,2,6,1,1">
         <item>
          <spacer name="horizontalSpacer_33">
           <property name="orientation">
@@ -158,19 +223,6 @@
          </spacer>
         </item>
        </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="8,2,1,1">
@@ -1269,8 +1321,8 @@
    <slot>lightConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>436</x>
-     <y>413</y>
+     <x>112</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>604</x>
@@ -1285,8 +1337,8 @@
    <slot>cameraConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>439</x>
-     <y>415</y>
+     <x>112</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>588</x>
@@ -1301,8 +1353,8 @@
    <slot>modelConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>421</x>
-     <y>411</y>
+     <x>112</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>533</x>
@@ -1317,8 +1369,8 @@
    <slot>exitConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>544</x>
-     <y>402</y>
+     <x>112</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>596</x>
@@ -1333,8 +1385,8 @@
    <slot>exitConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>511</x>
-     <y>400</y>
+     <x>112</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>522</x>
@@ -1349,8 +1401,8 @@
    <slot>exitConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>549</x>
-     <y>395</y>
+     <x>112</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>585</x>
@@ -1381,8 +1433,8 @@
    <slot>setSaveDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>545</x>
-     <y>194</y>
+     <x>527</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
      <x>534</x>
@@ -1413,8 +1465,8 @@
    <slot>setSaveAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>286</x>
-     <y>139</y>
+     <x>411</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>288</x>
@@ -1429,8 +1481,8 @@
    <slot>setSaveDefect()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>459</x>
-     <y>138</y>
+     <x>605</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>422</x>

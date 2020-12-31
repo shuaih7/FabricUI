@@ -76,7 +76,7 @@ class PreprocessYOLO(object):
             
         image_resized = Image.fromarray(image_crop)
         image_resized = image_resized.resize(new_resolution, resample=Image.BILINEAR)
-        image_resized = np.array(image_resized)
+        image_resized = np.array(image_resized, dtype=np.float32)
         
         # Do not use cv2.resize since it will create some unknown features while squeezing the iamge size
         # image_resized = cv2.resize(image_crop, new_resolution, interpolation=cv2.INTER_LINEAR).astype(np.float32)
