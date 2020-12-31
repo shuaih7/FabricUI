@@ -51,6 +51,7 @@
         "nms_threshold": 0.2
     },
     "Pattern": {
+        "learn_turns": 5,
         "input_pin": 18,
         "steady_turns": 5,
         "steady_offset": 0.5

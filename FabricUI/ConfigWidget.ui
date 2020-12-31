@@ -40,7 +40,7 @@
    </attribute>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,2,2,2,2,2">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,2,2,2,2,2,3">
       <property name="leftMargin">
        <number>10</number>
       </property>
@@ -64,7 +64,24 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="3,2,3,2,3,2">
+       <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,1,1,1">
+        <item>
+         <widget class="QLabel" name="label_28">
+          <property name="text">
+           <string>学习圈数</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lrRevLine">
+          <property name="styleSheet">
+           <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QLabel" name="label_25">
           <property name="text">
@@ -82,6 +99,10 @@
           </property>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,1,1,1">
         <item>
          <widget class="QLabel" name="label_26">
           <property name="text">
@@ -227,7 +248,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="8,2,1,1">
         <property name="topMargin">
-         <number>0</number>
+         <number>12</number>
         </property>
         <item>
          <spacer name="horizontalSpacer_34">
@@ -1321,8 +1342,8 @@
    <slot>lightConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>73</y>
+     <x>483</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
      <x>604</x>
@@ -1337,8 +1358,8 @@
    <slot>cameraConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>73</y>
+     <x>483</x>
+     <y>427</y>
     </hint>
     <hint type="destinationlabel">
      <x>588</x>
@@ -1353,8 +1374,8 @@
    <slot>modelConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>73</y>
+     <x>483</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel">
      <x>533</x>
@@ -1369,8 +1390,8 @@
    <slot>exitConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>73</y>
+     <x>582</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel">
      <x>596</x>
@@ -1385,8 +1406,8 @@
    <slot>exitConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>73</y>
+     <x>582</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
      <x>522</x>
@@ -1401,8 +1422,8 @@
    <slot>exitConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>73</y>
+     <x>582</x>
+     <y>427</y>
     </hint>
     <hint type="destinationlabel">
      <x>585</x>

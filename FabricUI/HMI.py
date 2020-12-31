@@ -65,6 +65,12 @@ class MainWindow(QMainWindow):
         self.revSteady = False
         self.revNum = max(1, self.config_matrix["Pattern"]["steady_turns"])
         self.revOffset = max(0.0, self.config_matrix["Pattern"]["steady_offset"])
+        
+        self.lrNum = 0 # How many turns have been learnt
+        self.defectNum = 0
+        self.defectQueue = list()
+        self.lrRevNum = max(0, self.config_matrix["Pattern"]["learn_turns"]) # How many turns have to be learnt
+        
         self.revThread = revWorker(self.config_matrix, self.logger)
         self.revThread.revSignal.connect(self.revReceiver)
         self.revThread.start()
@@ -243,8 +249,13 @@ class MainWindow(QMainWindow):
         Receive the config_matrix from ConfigWidget, update the config_matrix, and update general configurations
         """
         self.config_matrix = cfg_matrix
+        if self.revThread.input_pin != cfg_matrix["Pattern"]["input_pin"]:
+            self.revThread.input_pin = cfg_matrix["Pattern"]["input_pin"]
+            
         self.revNum = max(1, cfg_matrix["Pattern"]["steady_turns"])
         self.revOffset = max(0.0, cfg_matrix["Pattern"]["steady_offset"])
+        self.lrRevNum = max(0, cfg_matrix["Pattern"]["learn_turns"])
+           
         self.checkSaveStatus()
         self.message("已更新常规设置。")
         

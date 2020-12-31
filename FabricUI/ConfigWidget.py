@@ -34,6 +34,7 @@ class ConfigWidget(QTabWidget):
         self.save_mode = config_matrix["save_mode"]
         self.setSaveMode(config_matrix["save_mode"])
         self.saveDirLine.setText(config_matrix["save_dir"])
+        self.lrRevLine.setText(str(config_matrix["Pattern"]["learn_turns"]))
         self.pinLine.setText(str(config_matrix["Pattern"]["input_pin"]))
         self.revNumLine.setText(str(config_matrix["Pattern"]["steady_turns"]))
         self.revOffsetLine.setText(str(config_matrix["Pattern"]["steady_offset"]))
@@ -66,6 +67,7 @@ class ConfigWidget(QTabWidget):
     def generalConfig(self):
         self.config_matrix["save_mode"] = self.getSaveMode()
         self.config_matrix["save_dir"] = self.saveDirLine.text()
+        self.config_matrix["Pattern"]["learn_turns"] = int(self.lrRevLine.text())
         self.config_matrix["Pattern"]["input_pin"] = int(self.pinLine.text())
         self.config_matrix["Pattern"]["steady_turns"] = int(self.revNumLine.text())
         self.config_matrix["Pattern"]["steady_offset"] = float(self.revOffsetLine.text())
