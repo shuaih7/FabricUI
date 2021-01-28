@@ -3,12 +3,12 @@
 
 '''
 Created on 11.20.2020
-Updated on 11.20.2020
+Updated on 01.28.2021
 
 Author: haoshaui@handaotech.com
 '''
 
-from .trt.onnx_to_tensorrt import cudaModel
-#from .win10.infer import inferModel
+from .trt import cudaModel
+#from .win import inferModel
 
 
