@@ -13,11 +13,8 @@
             0,
             0
         ],
-        "image_raw_h": 352,
-        "image_raw_w": 352,
-        "input_h": 352,
-        "input_w": 352,
-        "channel": 3,
+        "input_shape": [352,352],
+        "input_channel": 3,
         "yolo_anchors": [
             [
                 351,

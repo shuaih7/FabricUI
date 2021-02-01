@@ -19,6 +19,13 @@ sys.path.append(abs_path)
 
 
 class cudaModel(object):
+    """ Inference class for fabirc defect detection on Ubuntu Linux
+    
+    Attributes:
+        config_matrix: Dictionary for the configurations
+        messager: Status updater for logging and UI status update
+    
+    """
     def __init__(self, config_matrix, messager):
         # Try to load a previously generated YOLOv3-608 network graph in ONNX format:
         onnx_file_path = '/home/nvidia/Documents/Projects/Fabric_defect_detection/YOLO/fast_yolo.onnx'
