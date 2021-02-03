@@ -171,7 +171,7 @@ class MainWindow(QMainWindow):
                 #try:
                 image, boxes, labels, scores = self.model.infer(image)
                 self.imageLabel.refresh(image,boxes,labels,scores)
-                self.save(image, boxes, labels, scores)
+                #self.save(image, boxes, labels, scores)
                 #except Exception as expt:
                 #    self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
             else: 

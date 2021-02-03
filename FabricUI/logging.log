@@ -452,3 +452,124 @@ FabricUI 已开启。
 2020-12-04 09:41:29,260 - HMI.py[line:288] - WARNING: 未搜寻到相机，请检查相机设置并重试。
 2020-12-04 09:41:59,659 - HMI.py[line:288] - INFO: FabricUI 已关闭。
 
+2020-12-31 16:02:16,550 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-12-31 16:02:16,802 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2020-12-31 16:02:17,288 - HMI.py[line:343] - WARNING: 未搜寻到相机，请检查相机设置并重试。
+2020-12-31 16:02:52,426 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:13,733 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:14,053 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:14,284 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:45,253 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:45,644 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:45,813 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:45,955 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:46,105 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:46,413 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:46,571 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:46,745 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:46,903 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:47,046 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:47,212 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:47,360 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:47,534 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:47,691 - HMI.py[line:343] - INFO: 已更新常规设置。
+2020-12-31 16:03:56,747 - HMI.py[line:343] - INFO: FabricUI 已关闭。
+
+2020-12-31 16:04:04,620 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2020-12-31 16:04:04,838 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2020-12-31 16:04:05,337 - HMI.py[line:343] - WARNING: 未搜寻到相机，请检查相机设置并重试。
+2020-12-31 16:04:30,288 - HMI.py[line:343] - INFO: FabricUI 已关闭。
+
+2021-02-03 11:51:47,773 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 11:51:48,634 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2021-02-03 11:51:49,259 - HMI.py[line:343] - INFO: 搜寻到相机，连接中...
+2021-02-03 11:51:49,468 - HMI.py[line:343] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 11:52:19,018 - HMI.py[line:343] - INFO: FabricUI 已关闭。
+
+2021-02-03 11:53:00,581 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 11:53:00,801 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2021-02-03 11:53:01,090 - HMI.py[line:343] - INFO: 搜寻到相机，连接中...
+2021-02-03 11:53:02,011 - HMI.py[line:343] - INFO: 相机连接成功。
+2021-02-03 11:53:11,942 - HMI.py[line:343] - INFO: 开始检测...
+2021-02-03 11:57:14,071 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 11:57:14,288 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2021-02-03 11:57:14,586 - HMI.py[line:343] - INFO: 搜寻到相机，连接中...
+2021-02-03 11:57:15,491 - HMI.py[line:343] - INFO: 相机连接成功。
+2021-02-03 11:57:16,835 - HMI.py[line:343] - INFO: 开始检测...
+2021-02-03 12:00:29,439 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 12:00:29,654 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2021-02-03 12:00:29,954 - HMI.py[line:343] - INFO: 搜寻到相机，连接中...
+2021-02-03 12:00:30,870 - HMI.py[line:343] - INFO: 相机连接成功。
+2021-02-03 12:00:32,230 - HMI.py[line:343] - INFO: 开始检测...
+2021-02-03 12:03:18,683 - HMI.py[line:343] - INFO: 检测中止。
+2021-02-03 12:04:14,041 - HMI.py[line:343] - INFO: 开始检测...
+2021-02-03 12:04:22,069 - HMI.py[line:343] - INFO: 检测中止。
+2021-02-03 12:05:15,126 - HMI.py[line:343] - INFO: FabricUI 已关闭。
+
+2021-02-03 13:26:12,786 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 13:26:13,008 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2021-02-03 13:26:41,597 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 13:26:41,815 - HMI.py[line:343] - INFO: 
+FabricUI 已开启。
+2021-02-03 13:26:42,112 - HMI.py[line:343] - INFO: 搜寻到相机，连接中...
+2021-02-03 13:26:43,023 - HMI.py[line:343] - INFO: 相机连接成功。
+2021-02-03 13:26:48,522 - HMI.py[line:343] - INFO: 开始检测...
+2021-02-03 13:28:31,828 - HMI.py[line:343] - INFO: 检测中止。
+2021-02-03 13:28:33,197 - HMI.py[line:343] - INFO: 开始检测...
+2021-02-03 13:28:41,847 - HMI.py[line:343] - INFO: 检测中止。
+2021-02-03 13:28:50,059 - HMI.py[line:343] - INFO: FabricUI 已关闭。
+
+2021-02-03 14:40:02,217 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 14:40:02,427 - HMI.py[line:346] - INFO: 
+FabricUI 已开启。
+2021-02-03 14:40:02,717 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:40:03,621 - HMI.py[line:346] - INFO: 相机连接成功。
+2021-02-03 14:40:17,012 - HMI.py[line:346] - INFO: 开始检测...
+2021-02-03 14:40:31,503 - HMI.py[line:346] - INFO: 检测中止。
+2021-02-03 14:43:34,994 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:35,203 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:35,205 - HMI.py[line:346] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 14:43:36,806 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:37,050 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:37,952 - HMI.py[line:346] - INFO: 相机连接成功。
+2021-02-03 14:43:38,020 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:38,227 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:38,228 - HMI.py[line:346] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 14:43:38,232 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:38,439 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:38,440 - HMI.py[line:346] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 14:43:38,445 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:38,653 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:38,654 - HMI.py[line:346] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 14:43:38,659 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:38,867 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:38,868 - HMI.py[line:346] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 14:43:38,872 - HMI.py[line:346] - INFO: 更新相机配置，正在重启相机...
+2021-02-03 14:43:39,081 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:39,082 - HMI.py[line:346] - ERROR: 未连接到相机，请检查相机序列号是否正确并重试。
+2021-02-03 14:43:41,514 - HMI.py[line:346] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:43:42,421 - HMI.py[line:346] - INFO: 相机连接成功。
+2021-02-03 14:43:53,237 - HMI.py[line:346] - INFO: 开始检测...
+2021-02-03 14:44:25,341 - HMI.py[line:346] - INFO: 检测中止。
+2021-02-03 14:44:53,510 - HMI.py[line:346] - INFO: 开始检测...
+2021-02-03 14:45:11,952 - HMI.py[line:346] - INFO: 检测中止。
+2021-02-03 14:46:41,234 - HMI.py[line:346] - INFO: 开始检测...
+2021-02-03 14:46:49,287 - HMI.py[line:346] - INFO: 检测中止。
+2021-02-03 14:47:46,404 - HMI.py[line:346] - INFO: FabricUI 已关闭。
+
+2021-02-03 14:49:00,849 - onnx_to_tensorrt.py[line:119] - INFO: Successfully load the detection model.
+2021-02-03 14:49:01,062 - HMI.py[line:344] - INFO: 
+FabricUI 已开启。
+2021-02-03 14:49:01,346 - HMI.py[line:344] - INFO: 搜寻到相机，连接中...
+2021-02-03 14:49:02,255 - HMI.py[line:344] - INFO: 相机连接成功。
+2021-02-03 14:49:04,643 - HMI.py[line:344] - INFO: 开始检测...
+2021-02-03 14:49:05,981 - HMI.py[line:344] - INFO: 检测中止。
+2021-02-03 14:49:56,140 - HMI.py[line:344] - INFO: FabricUI 已关闭。
+

@@ -1,7 +1,7 @@
 {
     "Camera": {
-        "DeviceSerialNumber": "FDL17100010",
-        "ExposureTime": 1000,
+        "DeviceSerialNumber": "NR0190090349",
+        "ExposureTime": 300,
         "Gain": 15,
         "Binning": 4
     },
@@ -42,9 +42,9 @@
         "output_shapes": [
             [
                 1,
-                18,
-                11,
-                11
+                21,
+                22,
+                22
             ]
         ],
         "obj_threshold": 0.5,

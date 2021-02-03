@@ -15,7 +15,7 @@ def load_label_categories(label_file_path):
 LABEL_FILE_PATH = 'coco_labels.txt'
 ALL_CATEGORIES = load_label_categories(LABEL_FILE_PATH)
 """
-ALL_CATEGORIES = ["defect"]
+ALL_CATEGORIES = ["defect", "striation"]
 
 # Let's make sure that there are 80 classes, as expected for the COCO data set:
 CATEGORY_NUM = len(ALL_CATEGORIES)
@@ -54,7 +54,7 @@ class PreprocessYOLO(object):
         Keyword arguments:
         input_image_path -- string path of the image to be loaded
         """
-        
+        """
         if mode == "auto":
             h, w = input_image.shape[:2]
             offh, offw = 0, 0
@@ -67,6 +67,9 @@ class PreprocessYOLO(object):
             # Crop the input image by offsets
             h, w = input_image.shape[:2]
             image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
+        """
+        
+        image_crop = input_image
 
         # Expecting yolo_input_resolution in (height, width) format, adjusting to PIL
         # convention (width, height) in cv2:
