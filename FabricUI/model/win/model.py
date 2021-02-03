@@ -10,16 +10,13 @@ Author: haoshaui@handaotech.com
 
 import os
 import sys
-
-abs_path = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(abs_path, "..")))
-sys.path.append(abs_path)
-
 import cv2
 import numpy as np
 import paddle.fluid as fluid
-from base_model import BaseModel
-from utils import crop_image, normalize_image, map_boxes, draw_bbox_image
+from ..base_model import BaseModel
+from ..utils import *
+
+abs_path = os.path.abspath(os.path.dirname(__file__))
 
 
 class CudaModel(BaseModel):
@@ -28,11 +25,12 @@ class CudaModel(BaseModel):
         place = fluid.CUDAPlace(0) # Use CUDAPlace as default
         self.exe = fluid.Executor(place)
         model_path = os.path.join(abs_path, "freeze")
+        
         [self.inference_program, self.feed_target_names, self.fetch_targets] = fluid.io.load_inference_model(dirname=model_path, executor=self.exe, model_filename='__model__', params_filename='params')
         
     def preprocess(self, image):
         offsets = self.config_matrix["Model"]["offsets"]
-        input_shape = self.config_matrix["Model"]["input_shape"]
+        input_shape = [self.config_matrix["Model"]["input_h"], self.config_matrix["Model"]["input_w"]]
         
         if isinstance(image, str):
             image = cv2.imread(image, cv2.IMREAD_COLOR)

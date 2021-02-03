@@ -8,6 +8,6 @@ Updated on 01.28.2021
 Author: haoshaui@handaotech.com
 '''
 
-from .model import cudaModel
+from .model import CudaModel
 
 

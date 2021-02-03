@@ -16,7 +16,7 @@ import RPi.GPIO as GPIO
 from PyQt5.QtCore import QThread, pyqtSignal
 
 
-class revWorker(QThread):
+class RevWorker(QThread):
     """Get the signal from the proximity detector and send to the HMI class
 
     Attributes:
@@ -27,7 +27,7 @@ class revWorker(QThread):
     revSignal = pyqtSignal(float)
 
     def __init__(self, config_matrix, logger, parent=None):
-        super(revWorker, self).__init__(parent)
+        super(RevWorker, self).__init__(parent)
         self.config_matrix = config_matrix
         self.logger = logger
         

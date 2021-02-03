@@ -1,9 +1,9 @@
 {
     "Camera": {
-        "DeviceSerialNumber": "FDL17100010",
-        "ExposureTime": 1000,
-        "Gain": 15,
-        "Binning": 4
+        "serial_number": "NR0190090349",
+        "exposure_time": 1000,
+        "gain": 15,
+        "binning": 1
     },
     "Lighting": {},
     "Model": {
@@ -13,7 +13,8 @@
             0,
             0
         ],
-        "input_shape": [352,352],
+        "input_h": 352,
+	  "input_w": 352,
         "input_channel": 3,
         "yolo_anchors": [
             [

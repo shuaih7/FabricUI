@@ -40,13 +40,13 @@ class ConfigWidget(QTabWidget):
         self.revOffsetLine.setText(str(config_matrix["Pattern"]["steady_offset"]))
         
         # Load the current camera configurations
-        self.snLine.setText(str(config_matrix["Camera"]["DeviceSerialNumber"]))
+        self.snLine.setText(str(config_matrix["Camera"]["serial_number"]))
         #self.exposeLine.setValidator(QIntValidator(0,1000000))
-        self.exposeLine.setText(str(config_matrix["Camera"]["ExposureTime"]))
+        self.exposeLine.setText(str(config_matrix["Camera"]["exposure_time"]))
         #self.gainLine.setValidator(QIntValidator(0,1000))
-        self.gainLine.setText(str(config_matrix["Camera"]["Gain"]))
+        self.gainLine.setText(str(config_matrix["Camera"]["gain"]))
         #self.binningLine.setValidator(QIntValidator(1,4))
-        self.binningLine.setText(str(config_matrix["Camera"]["Binning"]))
+        self.binningLine.setText(str(config_matrix["Camera"]["binning"]))
         
         # Load the current lighting configurations
         # ......
@@ -78,10 +78,10 @@ class ConfigWidget(QTabWidget):
     @pyqtSlot()    
     def cameraConfig(self):
         # Save the camera configurations
-        self.config_matrix["Camera"]["DeviceSerialNumber"] = self.snLine.text()
-        self.config_matrix["Camera"]["ExposureTime"] = int(self.exposeLine.text())
-        self.config_matrix["Camera"]["Gain"] = int(self.gainLine.text())
-        self.config_matrix["Camera"]["Binning"] = int(self.binningLine.text())
+        self.config_matrix["Camera"]["serial_number"] = self.snLine.text()
+        self.config_matrix["Camera"]["exposure_time"] = int(self.exposeLine.text())
+        self.config_matrix["Camera"]["gain"] = int(self.gainLine.text())
+        self.config_matrix["Camera"]["binning"] = int(self.binningLine.text())
         
         self.cameraCfgSignal.emit(self.config_matrix)
         self.saveConfig()
