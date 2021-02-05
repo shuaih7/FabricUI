@@ -3,9 +3,9 @@
         "serial_number": "NR0190090349",
         "exposure_time": 1000,
         "gain": 15,
-        "binning": 1
+        "binning": 4
     },
-    "Lighting": {},
+    "Light": {},
     "Model": {
         "offsets": [
             0,
@@ -48,7 +48,7 @@
         "obj_threshold": 0.5,
         "nms_threshold": 0.2
     },
-    "Pattern": {
+    "RevMonitor": {
         "learn_turns": 5,
         "input_pin": 18,
         "steady_turns": 5,

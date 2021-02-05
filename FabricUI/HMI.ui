@@ -102,7 +102,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="resetBtn">
+           <widget class="QPushButton" name="btnReset">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
@@ -172,7 +172,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="startBtn">
+         <widget class="QPushButton" name="btnLive">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -207,7 +207,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="configBtn">
+         <widget class="QPushButton" name="btnConfig">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -277,7 +277,7 @@
          <number>20</number>
         </property>
         <item>
-         <widget class="ImageLabel" name="imageLabel">
+         <widget class="Canvas" name="canvas">
           <property name="styleSheet">
            <string notr="true">border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
           </property>
@@ -315,15 +315,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ImageLabel</class>
+   <class>Canvas</class>
    <extends>QLabel</extends>
-   <header location="global">ImageLabel.h</header>
+   <header location="global">Canvas.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>configBtn</sender>
+   <sender>btnConfig</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>systemConfig()</slot>
@@ -339,7 +339,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>resetBtn</sender>
+   <sender>btnReset</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>reset()</slot>
@@ -354,27 +354,11 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>startBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>startInferring()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>502</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>97</x>
-     <y>647</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>startTestInferring()</slot>
-  <slot>startInferring()</slot>
   <slot>systemConfig()</slot>
   <slot>reset()</slot>
+  <slot>live()</slot>
  </slots>
 </ui>

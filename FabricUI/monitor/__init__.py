@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-Created on 11.20.2020
-Updated on 01.28.2021
+Created on 02.01.2020
+Updated on 02.05.2021
 
 Author: haoshaui@handaotech.com
 '''
@@ -13,8 +13,6 @@ import platform
 system = platform.system()
 
 if system == "Windows":
-    from .model_win import CudaModel
+    from .rev_monitor_win import RevMonitor
 elif system == "Linux":
-    from .model_trt import CudaModel
-
-
+    from .rev_monitor_trt import RevMonitor
