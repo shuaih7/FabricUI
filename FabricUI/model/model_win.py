@@ -3,13 +3,12 @@
 
 '''
 Created on 11.20.2020
-Updated on 02.05.2021
+Updated on 02.07.2021
 
 Author: haoshaui@handaotech.com
 '''
 
 import os
-import sys
 import cv2
 import copy
 import numpy as np
@@ -21,6 +20,15 @@ abs_path = os.path.abspath(os.path.dirname(__file__))
 
 
 class CudaModel(Model):
+    """ CudaModel for inference on Windows 10 OS
+        Note: The major postprocess for model outputs are freezed 
+    
+    Attributes:
+        params: Model parameters
+    
+    Raises:
+    
+    """
     def __init__(self, params):
         super(CudaModel, self).__init__(params=params)
         place = fluid.CUDAPlace(0) # Use CUDAPlace as default

@@ -20,7 +20,8 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 
 def draw_results(image, results):
-    if results is None: return image
+    image = format_image(image)
+    if results is None or len(results)==0: return image
     
     boxes = results['boxes']
     labels = results['labels']
@@ -34,7 +35,16 @@ def draw_results(image, results):
         #    fontScale=0.5, color=color[label], thickness=2)
             
     return image
+    
+    
+def format_image(image): # Gray to RGB
+    if image.shape[-1] == 4: 
+        image = image[:,:,:3]
+    elif image.shape[-1] != 3: 
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
 
+    return image
+    
 
 class Canvas(QLabel):
     def __init__(self, parent=None):

@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 02.05.2021
+Updated on 02.07.2021
 
 Author: haoshaui@handaotech.com
 '''
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
             self.camera = Camera(camera_params)
             self.messager("相机初始化成功。")
         except Exception as expt:
-            self.messager(expt, flag="error")
+            self.messager(str(expt), flag="error")
             self.camera = None
             
     def initLight(self):
@@ -90,17 +90,17 @@ class MainWindow(QMainWindow):
             self.model = Model(model_params)
             self.messager("模型初始化成功。")
         except Exception as expt:
-            self.messager(expt, flag="error")
+            self.messager(str(expt), flag="error")
             self.model = None
             
     def initWidget(self):
         self.canvas.setConfig(self.config_matrix)
         
         self.configWidget = ConfigWidget(self.config_matrix)
-        self.configWidget.generalCfgSignal.connect(self.generalConfig)
-        self.configWidget.cameraCfgSignal.connect(self.cameraConfig)
-        self.configWidget.lightCfgSignal.connect(self.lightConfig)
-        self.configWidget.modelCfgSignal.connect(self.modelConfig)
+        self.configWidget.configSignal.connect(self.generalConfig)
+        self.configWidget.configSignal.connect(self.cameraConfig)
+        self.configWidget.configSignal.connect(self.lightConfig)
+        self.configWidget.configSignal.connect(self.modelConfig)
         
     def initRevMonitor(self):
         rev_params = self.config_matrix['RevMonitor']
@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
             if self.camera is not None: self.live()
             return 
 
-        # Normal Case:
+        # Normal Case - Start livestream:
         self.is_live = True
         self.is_infer = False
         self.btnLive.setText("开始检测")
@@ -178,64 +178,34 @@ class MainWindow(QMainWindow):
     
     @pyqtSlot()
     def systemConfig(self):
-        self.configWidget.show()
+        self.configWidget.showConfig()
         
     @pyqtSlot()
     def reset(self):
         pass
         
-    @pyqtSlot(dict)
-    def generalConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and update general configurations
-        """
-        self.config_matrix = cfg_matrix
-        if self.revThread.input_pin != cfg_matrix["Pattern"]["input_pin"]:
-            self.revThread.input_pin = cfg_matrix["Pattern"]["input_pin"]
-            
-        self.revNum = max(1, cfg_matrix["Pattern"]["steady_turns"])
-        self.revOffset = max(0.0, cfg_matrix["Pattern"]["steady_offset"])
-        self.lrRevNum = max(0, cfg_matrix["Pattern"]["learn_turns"])
-           
-        self.checkSaveStatus()
+    @pyqtSlot(str)
+    def generalConfig(self, module):
+        if module != "General": return
+        params = self.config_matrix[module]
         self.messager("已更新常规设置。")
         
-    @pyqtSlot(dict)
-    def cameraConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the camera
-        """
-        self.config_matrix = cfg_matrix
-        self.stopRunning(msg="更新相机配置，正在重启相机...", flag="info")
-        self.liveStream()
+    @pyqtSlot(str)
+    def cameraConfig(self, module):
+        if module != "Camera": return 
+        params = self.config_matrix[module]
+        self.camera.updateParams(params)
+        self.messager("已更新常规设置。")
         
-    @pyqtSlot(dict)
-    def lightConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the light       
-        """
-        self.config_matrix = cfg_matrix
+    @pyqtSlot(str)
+    def lightConfig(self, module):
+        if module != "Light": return
+        params = self.config_matrix[module]
         
-    @pyqtSlot(dict)
-    def modelConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the model
-        """
-        self.config_matrix = cfg_matrix
-        self.stopInferring(msg="更新相机配置，正在重启模型...", flag="info")
-        self.model = CudaModel(self.config_matrix, self.logger)
-        self.messager("模型配置完成，请点击“开始检测”按钮以开始布匹的检测。")
-
-    def stopRunning(self, msg=None, flag="info"):
-        self.is_live = False
-        self.is_infer = False
-        self.startBtn.setText("开始检测")
-        if msg is not None: self.messager(msg, flag=flag)
-        
-    def interruptStop(self, msg=None, flag="error"):
-        self.is_live = False
-        self.startBtn.setText("连接相机")
-        if msg is not None: self.messager(msg, flag=flag)
+    @pyqtSlot(str)
+    def modelConfig(self, module):
+        if module != "Model": return 
+        params = self.config_matrix[module]
         
     def messager(self, msg, flag="info"): 
         self.logger_flags[flag.lower()](msg)
@@ -251,9 +221,7 @@ class MainWindow(QMainWindow):
 
         if reply == QMessageBox.Yes: 
             self.messager("FabricUI 已关闭。\n", flag="info")
-            self.revThread.exit()
             sys.exit()
-            #ev.accept()
         else: ev.ignore()
       
         

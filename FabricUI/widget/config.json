@@ -1,11 +1,12 @@
 {
     "General": {
-        "save_mode": 1,
-        "save_dir": "/home/taoli/Documents/Results"     },
+        "save_mode": "0",
+        "save_dir": "/home/taoli/Documents/Results"
+    },
     "Camera": {
-        "serial_number": "NR0190090349",
+        "serial_number": "0100000000",
         "exposure_time": 1000,
-        "gain": 15,
+        "gain": 24,
         "binning": 4
     },
     "Light": {},
@@ -17,7 +18,7 @@
             0
         ],
         "input_h": 352,
-	  "input_w": 352,
+        "input_w": 352,
         "input_channel": 3,
         "yolo_anchors": [
             [

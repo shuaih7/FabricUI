@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>布匹缺陷检测UI</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:rgb(207,207,207)</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -36,7 +39,22 @@
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,4">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="9,3,3,4,4,6">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="9,3,3,4,1,4,1,6">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="leftMargin">
+         <number>15</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>15</number>
+        </property>
+        <property name="bottomMargin">
+         <number>20</number>
+        </property>
         <item>
          <widget class="QLabel" name="logoLabel">
           <property name="sizePolicy">
@@ -102,7 +120,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btnReset">
+           <widget class="PushButton" name="btnReset">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
@@ -116,7 +134,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+             <string notr="true">font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
             </property>
             <property name="text">
              <string>复位</string>
@@ -172,7 +190,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="btnLive">
+         <widget class="PushButton" name="btnLive">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -183,7 +201,7 @@
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;</string>
+           <string notr="true">font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
           </property>
           <property name="text">
            <string>连接相机</string>
@@ -207,7 +225,20 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btnConfig">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="PushButton" name="btnConfig">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -215,7 +246,7 @@
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 30px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+           <string notr="true">font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
           </property>
           <property name="text">
            <string>系统设置</string>
@@ -239,9 +270,22 @@
          </widget>
         </item>
         <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QLabel" name="statusLabel">
           <property name="styleSheet">
-           <string notr="true">font: bold; font-size: 20px;height: 36px;width: 100px; border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+           <string notr="true">font: bold;font-size: 20px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(222,222,222)</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
@@ -279,7 +323,7 @@
         <item>
          <widget class="Canvas" name="canvas">
           <property name="styleSheet">
-           <string notr="true">border:2px groove gray;border-radius:15px;padding:2px 4px;</string>
+           <string notr="true">font: bold;font-size: 20px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(222,222,222)</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
@@ -319,6 +363,11 @@
    <extends>QLabel</extends>
    <header location="global">Canvas.h</header>
   </customwidget>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">PushButton.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -351,6 +400,22 @@
     <hint type="destinationlabel">
      <x>151</x>
      <y>787</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnLive</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>live()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>514</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>275</x>
+     <y>826</y>
     </hint>
    </hints>
   </connection>
