@@ -3,7 +3,7 @@
 
 '''
 Created on 11.20.2020
-Updated on 02.07.2021
+Updated on 02.08.2021
 
 Author: haoshaui@handaotech.com
 '''
@@ -14,7 +14,8 @@ import copy
 import numpy as np
 import paddle.fluid as fluid
 from .model import Model
-from .utils import *
+from .preprocess import PreprocessYOLO
+from .postprocess import map_boxes
 
 abs_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -34,22 +35,20 @@ class CudaModel(Model):
         place = fluid.CUDAPlace(0) # Use CUDAPlace as default
         self.exe = fluid.Executor(place)
         model_path = os.path.join(abs_path, "win")
+        self.updateParams(params)
         
         [self.inference_program, self.feed_target_names, self.fetch_targets] = fluid.io.load_inference_model(dirname=model_path, executor=self.exe, model_filename='__model__', params_filename='params')
         
+    def updateParams(self, params):
+        input_h = params['input_h']
+        input_w = params['input_w']
+        
+        self.params = params
+        self.input_shape = np.array([input_h, input_w], dtype=np.int32)
+        self.preprocessor = PreprocessYOLO(params)
+        
     def preprocess(self, image):
-        offsets = self.params["offsets"]
-        input_shape = [self.params["input_h"], self.params["input_w"]]
-        
-        if isinstance(image, str):
-            image = cv2.imread(image, cv2.IMREAD_COLOR)
-            if image is None: raise ValueError("Could not read image file.")
-        self.input_shape = np.array(input_shape, dtype=np.int32)
-        self.image_shape = np.array(image.shape[:2], dtype=np.int32)
-        
-        #image = crop_image(image, offsets)
-        origin, image = normalize_image(image, input_shape)
-        
+        origin, image = self.preprocessor(image)
         return origin, image
         
     def infer(self, image):
@@ -72,15 +71,12 @@ class CudaModel(Model):
         scores = bboxes[:, 1].astype('float32')
         boxes = bboxes[:, 2:].astype('float32')
         
-        boxes = map_boxes(boxes, self.input_shape, self.image_shape)
+        boxes = map_boxes(boxes, self.input_shape, origin.shape[:2])
         results['boxes'] = boxes
         results['labels'] = labels
         results['scores'] = scores
         
         return results
-        
-    def updateParams(self, params):
-        self.params = params
         
     def __call__(self, image):
         origin, image = self.preprocess(image)

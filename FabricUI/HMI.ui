@@ -6,18 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1124</width>
-    <height>788</height>
+    <width>1200</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1000</width>
+    <width>1200</width>
     <height>750</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>布匹缺陷检测UI</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <selectedon>icon/hd_icon.jpg</selectedon>
+   </iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color:rgb(207,207,207)</string>
@@ -37,20 +42,33 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,4">
+     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,5,1,20,2">
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout" stretch="9,3,3,4,1,4,1,6">
         <property name="spacing">
          <number>10</number>
         </property>
         <property name="leftMargin">
-         <number>15</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
          <number>10</number>
         </property>
         <property name="rightMargin">
-         <number>15</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
          <number>20</number>
@@ -307,6 +325,19 @@
        </layout>
       </item>
       <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
         <property name="spacing">
          <number>8</number>
@@ -341,6 +372,19 @@
         </item>
        </layout>
       </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </item>
    </layout>
@@ -350,7 +394,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1124</width>
+     <width>1200</width>
      <height>26</height>
     </rect>
    </property>
@@ -361,12 +405,12 @@
   <customwidget>
    <class>Canvas</class>
    <extends>QLabel</extends>
-   <header location="global">Canvas.h</header>
+   <header location="global">widget/Canvas.h</header>
   </customwidget>
   <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>
-   <header location="global">PushButton.h</header>
+   <header location="global">widget/PushButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -415,7 +459,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>275</x>
-     <y>826</y>
+     <y>787</y>
     </hint>
    </hints>
   </connection>

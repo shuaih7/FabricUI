@@ -30,7 +30,7 @@ def draw_results(image, results):
     
     for box, label, score in zip(boxes, labels, scores):
         xmin, ymin, xmax, ymax = box
-        image = cv2.rectangle(image, (xmin,ymin), (xmax,ymax), colors[label], thickness=3)
+        image = cv2.rectangle(image, (int(xmin), int(ymin)), (int(xmax),int(ymax)), colors[label], thickness=3)
         #image = cv2.putText(image, str(round(score,3)), (xmin,ymin), fontFace=font, 
         #    fontScale=0.5, color=color[label], thickness=2)
             
@@ -64,6 +64,12 @@ class Canvas(QLabel):
         convertToQtFormat = QImage(image.data.tobytes(), w, h, bytesPerLine, QImage.Format_RGB888)
         self.pixmap = QPixmap.fromImage(convertToQtFormat).scaled(self.size(), Qt.KeepAspectRatio, 
             Qt.SmoothTransformation)
+        self.update()
+        
+    def resizeEvent(self, event):
+        super(Canvas, self).resizeEvent(event)
+        if self.pixmap is not None:
+            self.pixmap = self.pixmap.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.update()
 
     def paintEvent(self, event):

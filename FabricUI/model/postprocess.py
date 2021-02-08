@@ -1,110 +1,51 @@
-import math, sys, cv2
-from PIL import Image
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+'''
+Created on 02.08.2021
+Updated on 02.08.2021
+
+Author: haoshaui@handaotech.com
+'''
+
+import os
+import sys
+import math
 import numpy as np
 
 
-ALL_CATEGORIES = ["defect"]
-CATEGORY_NUM = len(ALL_CATEGORIES)
-
-
-class PreprocessYOLO(object):
-    """A simple class for loading images with PIL and reshaping them to the specified
-    input resolution for YOLOv3-608.
-    """
-
-    def __init__(self, yolo_input_resolution, offsets=[0,0,0,0]):
-        """Initialize with the input resolution for YOLOv3, which will stay fixed in this sample.
-        Keyword arguments:
-        yolo_input_resolution -- two-dimensional tuple with the target network's (spatial)
-        input resolution in HW order
-        """
-        self.yolo_input_resolution = yolo_input_resolution
-        self.offsets=offsets
-
-    def process(self, input_image): 
-        """Load an image from the specified input path,
-        and return it together with a pre-processed version required for feeding it into a
-        YOLOv3 network.
-        Keyword arguments:
-        input_image_path -- string path of the image to be loaded
-        """
-        image_crop, image_resized = self._load_and_resize(input_image)
-        image_preprocessed = self._shuffle_and_normalize(image_resized)
-        return image_crop, image_preprocessed
-
-    def _load_and_resize(self, input_image):
-        """Load an image from the specified path and resize it to the input resolution.
-        Return the input image before resizing as a PIL Image (required for visualization),
-        and the resized image as a NumPy float array.
-        Keyword arguments:
-        input_image_path -- string path of the image to be loaded
-        """
-         
-        off_left, off_right, off_top, off_bottom = self.offsets
-      
-        # Crop the input image by offsets
-        h, w = input_image.shape[:2]
-        image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
-
-        # Expecting yolo_input_resolution in (height, width) format, adjusting to PIL
-        # convention (width, height) in cv2:
-        new_resolution = (
-            self.yolo_input_resolution[1],
-            self.yolo_input_resolution[0])
-            
-        image_resized = Image.fromarray(image_crop)
-        image_resized = image_resized.resize(new_resolution, resample=Image.BILINEAR)
-        image_resized = np.array(image_resized, dtype=np.float32)
+def map_boxes(boxes, input_shape, image_shape):
+    h, w = input_shape
+    img_h, img_w = image_shape
+    ratio_h, ratio_w = img_h/h, img_w/w
+    
+    map_boxes = []
+    for box in boxes:
+        xmin, ymin, xmax, ymax = int(box[0]*ratio_w), int(box[1]*ratio_h), \
+            int(box[2]*ratio_w), int(box[3]*ratio_h)
+        map_boxes.append([xmin, ymin, xmax, ymax])
         
-        # Do not use cv2.resize since it will create some unknown features while squeezing the iamge size
-        # image_resized = cv2.resize(image_crop, new_resolution, interpolation=cv2.INTER_LINEAR).astype(np.float32)
-        return image_crop, image_resized
-
-    def _shuffle_and_normalize(self, image):
-        """Normalize a NumPy array representing an image to the range [0, 1], and
-        convert it from HWC format ("channels last") to NCHW format ("channels first"
-        with leading batch dimension).
-        Keyword arguments:
-        image -- image as three-dimensional NumPy float array, in HWC format
-        """
-        image -= 127.5
-        image *= 0.007843
-        # HWC to CHW format:
-        image = np.transpose(image, [2, 0, 1])
-        # CHW to NCHW format:
-        image = np.expand_dims(image, axis=0)
-        # Convert the image to row-major order, also known as "C order":
-        image = np.array(image, dtype=np.float32, order='C')
-        return image
-
-
+    return map_boxes
+    
+    
 class PostprocessYOLO(object):
-    """Class for post-processing the three outputs tensors from YOLOv3-608."""
 
-    def __init__(self,
-                 yolo_masks,
-                 yolo_anchors,
-                 obj_threshold,
-                 nms_threshold,
-                 yolo_input_resolution):
-        """Initialize with all values that will be kept when processing several frames.
-        Assuming 3 outputs of the network in the case of (large) YOLOv3.
-        Keyword arguments:
-        yolo_masks -- a list of 3 three-dimensional tuples for the YOLO masks
-        yolo_anchors -- a list of 9 two-dimensional tuples for the YOLO anchors
-        object_threshold -- threshold for object coverage, float value between 0 and 1
-        nms_threshold -- threshold for non-max suppression algorithm,
-        float value between 0 and 1
-        input_resolution_yolo -- two-dimensional tuple with the target network's (spatial)
-        input resolution in HW order
-        """
-        self.masks = yolo_masks
-        self.anchors = yolo_anchors
-        self.object_threshold = obj_threshold
-        self.nms_threshold = nms_threshold
-        self.input_resolution_yolo = yolo_input_resolution
+    def __init__(self, params):
+        self.updateParams(params)
+        
+    def updateParams(self, params):
+        self.params = params
+        self.masks = params["yolo_masks"]
+        self.anchors = params['yolo_anchors']
+        self.object_threshold = params["obj_threshold"]
+        self.nms_threshold = params["nms_threshold"]
+        self.category_num = len(params['categories'])
+        
+        input_h = params['input_h']
+        input_w = params['input_w']
+        self.input_resolution_yolo = (input_h, input_w)
 
-    def process(self, outputs, resolution_raw):
+    def __call__(self, origin, outputs):
         """Take the YOLOv3 outputs generated from a TensorRT forward pass, post-process them
         and return a list of bounding boxes for detected object together with their category
         and their confidences in separate lists.
@@ -116,6 +57,8 @@ class PostprocessYOLO(object):
         for output in outputs:
             outputs_reshaped.append(self._reshape_output(output))
 
+        h, w = origin.shape[:2]
+        resolution_raw = (w, h)
         boxes, categories, confidences = self._process_yolo_output(
             outputs_reshaped, resolution_raw)
 
@@ -132,7 +75,7 @@ class PostprocessYOLO(object):
         dim1, dim2 = height, width
         dim3 = 3
         # There are CATEGORY_NUM=80 object categories:
-        dim4 = (4 + 1 + CATEGORY_NUM)
+        dim4 = (4 + 1 + self.category_num)
         return np.reshape(output, (dim1, dim2, dim3, dim4))
 
     def _process_yolo_output(self, outputs_reshaped, resolution_raw):

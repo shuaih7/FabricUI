@@ -18,6 +18,10 @@ class Model(ABC):
         self.params = params
         
     @abstractmethod
+    def updateParams(self, params):
+        self.params = params
+        
+    @abstractmethod
     def preprocess(image):
         return image
     

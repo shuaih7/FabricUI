@@ -24,6 +24,10 @@
   <property name="windowTitle">
    <string>系统设置</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../icon/hd_icon.jpg</normaloff>../icon/hd_icon.jpg</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color:rgb(222,222,222); font-size: 20px;height: 30px;width: 80px; </string>
   </property>
@@ -191,7 +195,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="saveDefBtn">
+         <widget class="QCheckBox" name="btnSaveDef">
           <property name="text">
            <string>仅存储缺陷</string>
           </property>
@@ -235,7 +239,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="fileBtn">
+         <widget class="PushButton" name="fileBtn">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -288,7 +292,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="generalSaveBtn">
+         <widget class="PushButton" name="btnGeneralSave">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -308,7 +312,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="generalExitBtn">
+         <widget class="PushButton" name="btnGeneralExit">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -619,7 +623,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="cameraSaveBtn">
+         <widget class="PushButton" name="btnCameraSave">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -633,7 +637,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="cameraExitBtn">
+         <widget class="PushButton" name="btnCameraExit">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -807,7 +811,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="lightSaveBtn">
+         <widget class="PushButton" name="btnLightSave">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -821,7 +825,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="lightExitBtn">
+         <widget class="PushButton" name="btnLightExit">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -1334,7 +1338,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="modelSaveBtn">
+         <widget class="PushButton" name="btnModelSave">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -1348,7 +1352,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="modelExitBtn">
+         <widget class="PushButton" name="btnModelExit">
           <property name="styleSheet">
            <string notr="true">font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;</string>
           </property>
@@ -1387,10 +1391,17 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">widget/PushButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>modelSaveBtn</sender>
+   <sender>btnModelSave</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>updateConfig()</slot>
@@ -1406,7 +1417,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>modelExitBtn</sender>
+   <sender>btnModelExit</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>exitConfig()</slot>
@@ -1422,7 +1433,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>generalSaveBtn</sender>
+   <sender>btnGeneralSave</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>updateConfig()</slot>
@@ -1438,7 +1449,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>generalExitBtn</sender>
+   <sender>btnGeneralExit</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>exitConfig()</slot>
@@ -1454,7 +1465,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>cameraSaveBtn</sender>
+   <sender>btnCameraSave</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>updateConfig()</slot>
@@ -1470,7 +1481,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>cameraExitBtn</sender>
+   <sender>btnCameraExit</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>exitConfig()</slot>
@@ -1486,7 +1497,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>lightSaveBtn</sender>
+   <sender>btnLightSave</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>updateConfig()</slot>
@@ -1502,7 +1513,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>lightExitBtn</sender>
+   <sender>btnLightExit</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>exitConfig()</slot>
@@ -1534,7 +1545,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>saveDefBtn</sender>
+   <sender>btnSaveDef</sender>
    <signal>clicked()</signal>
    <receiver>ConfigWidget</receiver>
    <slot>setSaveDefect()</slot>

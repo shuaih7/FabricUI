@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QTabWidget, QFileDialog
 
 
 abs_path = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(abs_path)
+cfg_path = os.path.abspath(os.path.join(abs_path, ".."))
 
 
 def dtype_cast(value, dtype):
@@ -105,7 +105,7 @@ class ConfigWidget(QTabWidget):
         self.close()
         
     def writeConfig(self):
-        json_file = os.path.join(abs_path, "config.json")
+        json_file = os.path.join(cfg_path, "config.json")
         with open(json_file, "w", encoding="utf-8") as f:
             cfg_obj = json.dumps(self.config_matrix, indent=4)
             f.write(cfg_obj)
@@ -125,17 +125,17 @@ class ConfigWidget(QTabWidget):
         
         if str(mode) == "1": 
             self.btnSaveAll.setChecked(True)
-            self.saveDefBtn.setChecked(False)
+            self.btnSaveDef.setChecked(False)
         elif str(mode) == "2": 
             self.btnSaveAll.setChecked(False)
-            self.saveDefBtn.setChecked(True)
+            self.btnSaveDef.setChecked(True)
         else:
             self.btnSaveAll.setChecked(False)
-            self.saveDefBtn.setChecked(False)
+            self.btnSaveDef.setChecked(False)
             
     def getSaveMode(self):
         mode = "0"
-        if self.saveDefBtn.isChecked(): mode = "2"
+        if self.btnSaveDef.isChecked(): mode = "2"
         elif self.btnSaveAll.isChecked(): mode = "1"
         
         return mode

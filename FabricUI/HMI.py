@@ -30,7 +30,7 @@ from log import getLogger
 from device import GXCamera as Camera
 from model import CudaModel as Model
 from monitor import RevMonitor as RevMonitor
-from widget.ConfigWidget import ConfigWidget
+from widget import ConfigWidget
 
 
 class MainWindow(QMainWindow):
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow):
         if module != "Camera": return 
         params = self.config_matrix[module]
         self.camera.updateParams(params)
-        self.messager("已更新常规设置。")
+        self.messager("已更新相机设置。")
         
     @pyqtSlot(str)
     def lightConfig(self, module):
