@@ -5,8 +5,8 @@
     },
     "Camera": {
         "serial_number": "0000000000",
-        "exposure_time": 1000,
-        "gain": 24,
+        "exposure_time": 300,
+        "gain": 12,
         "binning": 4
     },
     "Light": {},

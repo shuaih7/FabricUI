@@ -15,7 +15,7 @@ from PyQt5.QtCore import Qt, QPoint, QRect, QLineF, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen
 
 
-colors = [(255,0,0), (255,165,0)]
+colors = [(255,0,0), (255,165,0), (0,0,255)]
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 

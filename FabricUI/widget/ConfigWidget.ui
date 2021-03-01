@@ -32,7 +32,7 @@
    <string notr="true">background-color:rgb(222,222,222); font-size: 20px;height: 30px;width: 80px; </string>
   </property>
   <property name="currentIndex">
-   <number>3</number>
+   <number>0</number>
   </property>
   <property name="iconSize">
    <size>

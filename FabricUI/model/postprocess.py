@@ -61,6 +61,9 @@ class PostprocessYOLO(object):
         resolution_raw = (w, h)
         boxes, categories, confidences = self._process_yolo_output(
             outputs_reshaped, resolution_raw)
+            
+        # image_shape = origin.shape[:2]
+        # boxes = map_boxes(boxes, self.input_resolution_yolo, image_shape)
 
         return boxes, categories, confidences
 

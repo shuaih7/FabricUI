@@ -52,6 +52,7 @@ class MainWindow(QMainWindow):
         self.initModel()
         self.initWidget()
         self.initRevMonitor()
+        self.initPatternStudy()
         self.initDatabase()
         self.messager("\nFabricUI 已开启。", flag="info")
         
@@ -104,9 +105,22 @@ class MainWindow(QMainWindow):
         
     def initRevMonitor(self):
         rev_params = self.config_matrix['RevMonitor']
+        
         self.rev_monitor = RevMonitor(rev_params)
         self.rev_monitor.revSignal.connect(self.revReceiver)
         self.rev_monitor.start()
+        
+    def initPatternStudy(self):
+        self.cur_rev_num = 0
+        self.init_rev_num = 2
+        self.steady_rev_num = 5
+        self.rev_offset = 0.5
+        self.rev_queue = list()
+        self.is_rev_steady = False
+        
+        self.intv_queue = list()
+        self.start_queue = list()
+        self.cir_start_time = -1
         
     def initDatabase(self):
         pass
@@ -124,19 +138,23 @@ class MainWindow(QMainWindow):
             return 
 
         # Normal Case - Start livestream:
+        t_start = 0.0
         self.is_live = True
         self.is_infer = False
         self.btnLive.setText("开始检测")
         
         while self.is_live: 
             try:
+                t_intv = time.time() - t_start
+                t_start = time.time()
                 image = self.camera.getImage()
             except: 
-                liveInterruption()
-                return
+                self.liveInterruption()
+                break
 
             if self.is_infer:
                 image, results = self.model(image)
+                results = self.patternStudy(results, t_intv)
                 self.canvas.refresh(image, results)
             else: 
                 self.canvas.refresh(image)
@@ -159,6 +177,7 @@ class MainWindow(QMainWindow):
             self.is_infer = False
             self.btnLive.setText("开始检测")
             self.messager("检测中止")
+            self.initPatternStudy()
         else:
             self.is_infer = True
             self.btnLive.setText("停止检测")
@@ -170,12 +189,76 @@ class MainWindow(QMainWindow):
         self.is_infer = False
         self.btnLive.setText("连接相机")
         self.camera = None
+        
+    def patternStudy(self, results, t_intv):
+        if not self.is_rev_steady: return 
+        
+        print("The current time interval is", t_intv)
+        
+        boxes = results["boxes"]
+        labels = results["labels"]
+        cir_time = 60 / self.rev
+        
+        num_def
+        for i, label in enumerate(labels):
+            if label == 0: num_def += 1
+            
+        if len(self.start_queue) > 0 and num_def != 3:
+            self.cir_start_time = sum(self.start_queue)/len(self.start_queue)
+            self.start_queue = list()
+            
+        elif num_def == 3:
+            self.start_queue.append(time.time())
+            c_intv = time.time() - self.cir_start_time
+            if abs(c_intv-cir_time) <= 1.5*t_intv:
+                self.messager("检测到一整圈!!!!!!!!")
+                for i, label in enumerate(labels):
+                    if label == 0: results["labels"][i] = 2
+            
+        """
+        if self.cir_start_time < 0:
+            if len(centers) == 3:
+                self.messager("开始计时...")
+                self.cir_start_time = time.time()
+        else:
+            c_intv = time.time() - self.cir_start_time
+            if abs(c_intv-cir_time) <= 1.5*t_intv and len(centers) == 3:
+                self.messager("检测到一整圈!!!!!!!!")
+                for i, label in enumerate(labels):
+                    if label == 0: results["labels"][i] += 2
+                    
+            elif c_intv - cir_time > 1.5*t_intv:
+                self.cir_start_time = -1
+                self.messager("计时中止")
+            else: 
+                self.messager("正在计时...")
+        """
+        return results
     
     @pyqtSlot(float)
     def revReceiver(self, rev):
-        self.rev = rev
+        self.updateRevStatus(rev)
         self.revLabel.setText(str(rev))
-    
+        
+    def updateRevStatus(self, rev):
+        if not self.is_infer: return
+        
+        if self.cur_rev_num < self.init_rev_num:
+            # self.messager("初始化圈速信息，请稍候...", flag="info")
+            self.cur_rev_num += 1
+            return 
+         
+        self.rev = rev
+        self.rev_queue.append(rev)
+        if len(self.rev_queue) == self.steady_rev_num:
+            if max(self.rev_queue)-min(self.rev_queue) <= self.rev_offset:
+                self.is_rev_steady = True
+                self.rev_queue.pop(0)
+                # self.messager("转速已稳定，正在检测...", flag="info")
+            else:
+                self.initPatternStudy()
+                # self.messager("正在等待转速稳定...", flag="info")
+
     @pyqtSlot()
     def systemConfig(self):
         self.configWidget.showConfig()
