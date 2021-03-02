@@ -3,9 +3,9 @@
 
 '''
 Created on 11.19.2020
-Updated on 02.07.2021
+Updated on 03.02.2021
 
-Author: haoshaui@handaotech.com
+Author: haoshuai@handaotech.com
 '''
 
 import os
@@ -27,10 +27,11 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QEvent, QSize
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
 
 from log import getLogger
+from widget import ConfigWidget
 from device import GXCamera as Camera
 from model import CudaModel as Model
 from monitor import RevMonitor as RevMonitor
-from widget import ConfigWidget
+from pattern import PatternFilter as PatternFilter
 
 
 class MainWindow(QMainWindow):
@@ -45,6 +46,7 @@ class MainWindow(QMainWindow):
             self.config_matrix = json.load(f)
             f.close()
         
+        # Initializations
         self.initParams()
         self.initLogger()
         self.initCamera()
@@ -52,8 +54,7 @@ class MainWindow(QMainWindow):
         self.initModel()
         self.initWidget()
         self.initRevMonitor()
-        self.initPatternStudy()
-        self.initDatabase()
+        self.initPatternFilter()
         self.messager("\nFabricUI 已开启。", flag="info")
         
     def initParams(self):
@@ -110,7 +111,7 @@ class MainWindow(QMainWindow):
         self.rev_monitor.revSignal.connect(self.revReceiver)
         self.rev_monitor.start()
         
-    def initPatternStudy(self):
+    def initPatternFilter(self):
         self.cur_rev_num = 0
         self.init_rev_num = 2
         self.steady_rev_num = 5
@@ -177,7 +178,7 @@ class MainWindow(QMainWindow):
             self.is_infer = False
             self.btnLive.setText("开始检测")
             self.messager("检测中止")
-            self.initPatternStudy()
+            self.initPatternFilter()
         else:
             self.is_infer = True
             self.btnLive.setText("停止检测")
@@ -256,7 +257,7 @@ class MainWindow(QMainWindow):
                 self.rev_queue.pop(0)
                 # self.messager("转速已稳定，正在检测...", flag="info")
             else:
-                self.initPatternStudy()
+                self.initPatternFilter()
                 # self.messager("正在等待转速稳定...", flag="info")
 
     @pyqtSlot()
