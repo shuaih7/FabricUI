@@ -3,12 +3,13 @@
 
 '''
 Created on 02.01.2020
-Updated on 02.05.2021
+Updated on 03.03.2021
 
 Author: haoshaui@handaotech.com
 '''
 
 import platform
+from .time_monitor import TimeMonitor
 
 system = platform.system()
 

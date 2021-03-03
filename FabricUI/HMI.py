@@ -31,7 +31,6 @@ from widget import ConfigWidget
 from device import GXCamera as Camera
 from device import Machine as Machine
 from model import CudaModel as Model
-from recorder import Recorder as Recorder
 from monitor import RevMonitor as RevMonitor
 from pattern import PatternFilter as PatternFilter
 
@@ -191,11 +190,10 @@ class MainWindow(QMainWindow):
         self.rev = rev
         self.revLabel.setText(str(rev))
         
-        if self.is_live and self.is_infer:
-            if self.rev_monitor.is_steady:
-                self.messager("转速已稳定，检测中...", flag="info")
-            else:
-                self.messager("正在等待转速稳定，请稍后...", flag="info")
+        if self.rev_monitor.is_steady:
+            self.messager("转速已稳定，检测中...", flag="info")
+        else:
+            self.messager("正在等待转速稳定，请稍后...", flag="info")
 
     @pyqtSlot()
     def systemConfig(self):
