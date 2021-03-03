@@ -3,7 +3,7 @@
 
 '''
 Created on 11.20.2020
-Updated on 12.30.2020
+Updated on 03.02.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -27,6 +27,9 @@ class RevMonitor(QThread):
 
     def __init__(self, params, parent=None):
         super(RevMonitor, self).__init__(parent)
+        self.updateParams(params)
+    
+    def updateParams(self, params):
         self.params = params
         
         self.input_pin = params["input_pin"]
@@ -36,7 +39,27 @@ class RevMonitor(QThread):
         GPIO.setmode(GPIO.BCM)
         # set the pin as input
         GPIO.setup(self.input_pin, GPIO.IN)
-
+        
+        # Initialize the revolution-steady monitor parameters
+        self.is_steady = False
+        self.steady_turns = params["steady_turns"]
+        self.rev_offset = params["rev_offset"]
+        self.rev_queue = list()
+    
+    def updateRevStatus(self, rev):
+        rev_num = len(self.rev_queue)
+        if rev_num < self.steady_turns:
+            self.rev_queue.append(rev)
+        if rev_num + 1 < self.steady_turns: 
+            self.is_steady = False
+            return
+        
+        if max(self.rev_queue)-min(self.rev_queue) < self.rev_offset:
+            self.is_steady = True
+        else:
+            self.is_steady = False
+        self.rev_queue.pop(0)
+        
     def run(self):
         try:
             start = time.time()
@@ -54,9 +77,10 @@ class RevMonitor(QThread):
                         # calculate second used per round
                         spr = time.time() - start
                         # calculate RPM
-                        rpm = 60.0 / spr
+                        rev = 60.0 / spr
                         # send out the revolution value
-                        self.revSignal.emit(round(rpm, 3))
+                        self.updateRevStatus(rev)
+                        self.revSignal.emit(round(rev, 3))
                         # reset start time for next round
                         start = time.time()
                     self.prev_value = value

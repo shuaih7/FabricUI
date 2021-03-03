@@ -8,6 +8,6 @@ Updated on 03.02.2021
 Author: haoshuai@handaotech.com
 '''
 
-from .machine import Machine
+from .recorder import Recorder
 
 

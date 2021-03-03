@@ -3,9 +3,9 @@
 
 '''
 Created on 11.20.2020
-Updated on 12.30.2020
+Updated on 03.02.2021
 
-Author: haoshaui@handaotech.com
+Author: haoshuai@handaotech.com
 '''
 
 
@@ -20,7 +20,15 @@ class RevMonitor(QThread):
 
     def __init__(self, params, parent=None):
         super(RevMonitor, self).__init__(parent)
+        self.updateParams(params)
+        
+    def updateParams(self, params):
         self.params = params
+        
+        self.is_steady = False
+        self.steady_turns = params["steady_turns"]
+        self.rev_offset = params["rev_offset"]
+        self.rev_queue = list()
 
     def run(self):
         self.revSignal.emit(0.0)

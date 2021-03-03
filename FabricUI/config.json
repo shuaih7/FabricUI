@@ -5,7 +5,7 @@
     },
     "Camera": {
         "serial_number": "0000000000",
-        "exposure_time": 300,
+        "exposure_time": 500,
         "gain": 12,
         "binning": 4
     },
@@ -57,9 +57,12 @@
         "nms_threshold": 0.2
     },
     "RevMonitor": {
-        "learn_turns": 5,
         "input_pin": 18,
-        "steady_turns": 5,
-        "steady_offset": 0.5
+        "steady_turns": 3,
+        "rev_offset": 0.5
+    },
+    "Pattern": {
+        "min_rev": 0,
+        "max_rev": 45
     }
 }

@@ -9,5 +9,6 @@ Author: haoshaui@handaotech.com
 '''
 
 from .camera import GXCamera
+from .machine import Machine
 
 
