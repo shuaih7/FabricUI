@@ -3,9 +3,9 @@
 
 '''
 Created on 03.03.2020
-Updated on 03.03.2021
+Updated on 03.08.2021
 
-Author: haoshaui@handaotech.com
+Author: haoshuai@handaotech.com
 '''
 
 
@@ -22,6 +22,16 @@ class TimerNotInitError(Exception):
 
 
 class TimeMonitor(object):
+    """ Monitor for the running time 
+    
+    Attributes:
+        num: Length for the time queue for the average calculation
+        delimiter: The last key in the printing group
+        
+    Raises:
+        TimerNotInitError: Start time not initialized
+    
+    """
     def __init__(self, num=1, delimiter=''):
         self.setNum(num)
         self.setDelimiter(delimiter)

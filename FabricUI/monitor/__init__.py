@@ -10,6 +10,7 @@ Author: haoshaui@handaotech.com
 
 import platform
 from .time_monitor import TimeMonitor
+from .fps_monitor import FPSMonitor
 
 system = platform.system()
 

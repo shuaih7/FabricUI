@@ -3,7 +3,7 @@
 
 '''
 Created on 11.20.2020
-Updated on 03.02.2021
+Updated on 03.08.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -14,6 +14,8 @@ import time
 
 import RPi.GPIO as GPIO
 from PyQt5.QtCore import QThread, pyqtSignal
+
+from .data_struct import MonitorQueue
 
 
 class RevMonitor(QThread):
@@ -44,21 +46,17 @@ class RevMonitor(QThread):
         self.is_steady = False
         self.steady_turns = params["steady_turns"]
         self.rev_offset = params["rev_offset"]
-        self.rev_queue = list()
+        self.rev_queue = MonitorQueue(self.steady_turns)
     
     def updateRevStatus(self, rev):
-        rev_num = len(self.rev_queue)
-        if rev_num < self.steady_turns:
-            self.rev_queue.append(rev)
-        if rev_num + 1 < self.steady_turns: 
-            self.is_steady = False
-            return
+        self.rev_queue.append(rev)
         
-        if max(self.rev_queue)-min(self.rev_queue) < self.rev_offset:
+        if not self.rev_queue.is_full:
+            self.is_steady = False
+        elif self.rev_queue.getDiff() < self.rev_offset:
             self.is_steady = True
         else:
             self.is_steady = False
-        self.rev_queue.pop(0)
         
     def run(self):
         try:

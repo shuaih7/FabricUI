@@ -5,7 +5,7 @@
 Created on 02.04.2021
 Updated on 02.05.2021
 
-Author: haoshaui@handaotech.com
+Author: haoshuai@handaotech.com
 '''
 
 from .camera import GXCamera

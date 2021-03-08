@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.03.2021
+Updated on 03.08.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -31,7 +31,7 @@ from widget import ConfigWidget
 from device import GXCamera as Camera
 from device import Machine as Machine
 from model import CudaModel as Model
-from monitor import RevMonitor as RevMonitor
+from monitor import FPSMonitor, RevMonitor 
 from pattern import PatternFilter as PatternFilter
 
 
@@ -108,7 +108,9 @@ class MainWindow(QMainWindow):
         
     def initRevMonitor(self):
         rev_params = self.config_matrix['RevMonitor']
+        fps_params = self.config_matrix['FPSMonitor']
         
+        self.fps_monitor = FPSMonitor(fps_params)
         self.rev_monitor = RevMonitor(rev_params)
         self.rev_monitor.revSignal.connect(self.revReceiver)
         self.rev_monitor.start()
@@ -130,15 +132,13 @@ class MainWindow(QMainWindow):
             return 
 
         # Normal Case - Start livestream:
-        t_start = 0.0
         self.is_live = True
         self.is_infer = False
         self.btnLive.setText("开始检测")
         
         while self.is_live: 
             try:
-                t_intv = time.time() - t_start
-                t_start = time.time()
+                t_intv = self.fps_monitor.countLoop()
                 image = self.camera.getImage()
             except: 
                 self.liveInterruption()
@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
             if self.is_infer:
                 image, results = self.model(image)
                 if self.rev_monitor.is_steady:
-                    results['t_intv'] = t_intv
+                    results['intv'] = t_intv
                     results['rev'] = self.rev
                     results = self.pattern_filter(results)
                 self.canvas.refresh(image, results)

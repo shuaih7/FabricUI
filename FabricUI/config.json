@@ -61,6 +61,9 @@
         "steady_turns": 3,
         "rev_offset": 0.5
     },
+    "FPSMonitor": {
+        "queue_length": 3
+    },
     "Pattern": {
         "min_rev": 0,
         "max_rev": 45
