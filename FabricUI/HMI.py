@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.08.2021
+Updated on 03.09.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -32,7 +32,7 @@ from device import GXCamera as Camera
 from device import Machine as Machine
 from model import CudaModel as Model
 from monitor import FPSMonitor, RevMonitor 
-from pattern import PatternFilter as PatternFilter
+from pattern import PatternProcessor as PatternProcessor
 
 
 class MainWindow(QMainWindow):
@@ -50,18 +50,33 @@ class MainWindow(QMainWindow):
         # Initializations
         self.initParams()
         self.initLogger()
+        self.initMachine()
         self.initCamera()
         self.initLight()
         self.initModel()
         self.initWidget()
         self.initRevMonitor()
-        self.initPatternFilter()
+        self.initFPSMonitor()
+        self.initPatternProcessor()
         self.messager("\nFabricUI 已开启。", flag="info")
         
     def initParams(self):
         self.rev = -1
         self.is_live = False   # Whether images are showing on the label
         self.is_infer = False # Whether the livestream inference is on
+        
+        self.machine_size_mapdict = {
+            "single": {
+                30: 70,
+                34: 77.5,
+                38: 82.5
+            },
+            "dual": {
+                30: 70,
+                34: 77.5,
+                38: 82.5
+            }
+        }
         
     def initLogger(self):
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), 
@@ -73,6 +88,10 @@ class MainWindow(QMainWindow):
             "warning":  self.logger.warning,
             "error":    self.logger.error,
             "critical": self.logger.critical}
+            
+    def initMachine(self):
+        machine_params = self.config_matrix['Machine']
+        self.machine = Machine(machine_params)
         
     def initCamera(self):
         self.messager("初始化相机，正在连接...")
@@ -108,16 +127,26 @@ class MainWindow(QMainWindow):
         
     def initRevMonitor(self):
         rev_params = self.config_matrix['RevMonitor']
-        fps_params = self.config_matrix['FPSMonitor']
         
-        self.fps_monitor = FPSMonitor(fps_params)
         self.rev_monitor = RevMonitor(rev_params)
         self.rev_monitor.revSignal.connect(self.revReceiver)
         self.rev_monitor.start()
         
-    def initPatternFilter(self):
+    def initFPSMonitor(self):
+        fps_params = self.config_matrix['FPSMonitor']
+        self.fps_monitor = FPSMonitor(fps_params)
+        
+    def initPatternProcessor(self):
         pattern_params = self.config_matrix['Pattern']
-        self.pattern_filter = PatternFilter(pattern_params)
+        
+        machine_size = self.config_matrix['Machine']['size']
+        machine_type = self.config_matrix['Machine']['type']
+        machine_diameter = self.machine_size_mapdict[machine_type][machine_size]
+        pattern_params['camera_field'] = self.config_matrix['Camera']['field']
+        pattern_params['machine_diameter'] = machine_diameter
+        pattern_params['resolution_w'] = self.config_matrix['Camera']['resolution_w']
+        pattern_params['resolution_h'] = self.config_matrix['Camera']['resolution_h']
+        self.pattern_processor = PatternProcessor(pattern_params)
         
     def live(self):
         # Abnormal Case 1 - Already running live view
@@ -149,7 +178,7 @@ class MainWindow(QMainWindow):
                 if self.rev_monitor.is_steady:
                     results['intv'] = t_intv
                     results['rev'] = self.rev
-                    results = self.pattern_filter(results)
+                    results = self.pattern_processor(results)
                 self.canvas.refresh(image, results)
             else: 
                 self.canvas.refresh(image)
@@ -172,7 +201,7 @@ class MainWindow(QMainWindow):
             self.is_infer = False
             self.btnLive.setText("开始检测")
             self.messager("检测中止")
-            self.initPatternFilter()
+            self.initPatternProcessor()
         else:
             self.is_infer = True
             self.btnLive.setText("停止检测")

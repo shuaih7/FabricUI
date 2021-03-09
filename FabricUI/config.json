@@ -3,11 +3,19 @@
         "save_mode": "0",
         "save_dir": "/home/taoli/Documents/Results"
     },
+    "Machine": {
+        "type": "single",
+        "size": 30
+    },
+
     "Camera": {
         "serial_number": "0000000000",
         "exposure_time": 500,
         "gain": 12,
-        "binning": 4
+        "binning": 4,
+        "field": 14
+        "resolution_w": 720,
+        "resolution_h": 540,
     },
     "Light": {},
     "Model": {
@@ -65,7 +73,8 @@
         "queue_length": 3
     },
     "Pattern": {
-        "min_rev": 0,
-        "max_rev": 45
+        "blank_frames": 3,
+        
+
     }
 }

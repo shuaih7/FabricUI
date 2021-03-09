@@ -8,4 +8,4 @@ Updated on 03.02.2021
 Author: haoshuai@handaotech.com
 '''
 
-from .filter import PatternFilter
+from .pattern_processor import PatternProcessor

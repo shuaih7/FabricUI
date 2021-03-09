@@ -111,7 +111,7 @@ class CudaModel(Model):
         engine_file_path = os.path.join(abs_path, 'trt/fast_yolo.trt')
         
         self.updateParams(params)
-        self.load_trt_engine(onnx_file_path, engine_file_path)
+        self.loadTRTEngine(onnx_file_path, engine_file_path)
         
     def updateParams(self, params):
         self.output_shapes = params["output_shapes"] # [(1, 18, 11, 11)] for the fast-yolo model
@@ -119,7 +119,7 @@ class CudaModel(Model):
         self.postprocessor = PostprocessYOLO(params)
         self.params = params
         
-    def load_trt_engine(self, onnx_file_path, engine_file_path):
+    def loadTRTEngine(self, onnx_file_path, engine_file_path):
         self.engine = get_engine(onnx_file_path, engine_file_path)
         self.context = self.engine.create_execution_context()
         self.inputs, self.outputs, self.bindings, self.stream = allocate_buffers(self.engine)
