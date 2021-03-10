@@ -3,7 +3,7 @@
 
 '''
 Created on 03.09.2021
-Updated on 03.09.2021
+Updated on 03.10.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -22,19 +22,26 @@ def preprocessResults(results, index=0):
     labels = results['labels']
     
     boxes_info = list()
+    boxes_index = list()
     width, height, num = 0, 0, 0
-    for box, label in zip(boxes, labels):
+    for i, box in enumerate(boxes):
+        label = labels[i]
         if label == index: # Filter out other defects
             center_x = (box[0] + box[2]) / 2
             # center_y = (box[1] + box[3]) / 2
             width += box[2] - box[0]
             height += box[3] - box[1]
             num += 1
+            
             boxes_info.append(center_x)
+            boxes_index.append(i)
     
-    results['pattern_x'] = boxes_info
-    results['pattern_width'] = width / max(num, 1)
-    results['pattern_height'] = height / max(num, 1)
+    pattern = {
+        'x': boxes_info,
+        'width': width / max(num, 1),
+        'indices': boxes_index
+    }
+    results['pattern'] = pattern
     
     return results
 
@@ -44,7 +51,7 @@ class PatternRecorder(object):
         self.updateParams(params)
         
     def updateParams(self, params):
-        self.time_queue_length = max(3, params['blank_frames'])
+        self.blank_frames = max(5, params['blank_frames'])
         self.machine_perimeter = np.pi * params['machine_diameter']
         self.resolution_w = params['resolution_w']
         self.dist_to_pixel = params['resolution_w'] / params['camera_field'] # pix / cm
@@ -53,81 +60,109 @@ class PatternRecorder(object):
         
     def reset(self):
         self.is_record = False
-        self.start_time = None
+        self.is_start = False
+        self.start_intv_cache = 0
+        self.cur_blank_frames = 0
+        self.pattern_start_time = None
+        self.result_candidate = None
         
         self.num_tailors = 0
-        self.tailor_groups = 0
-        self.tailor_dists = list()
-        self.time_queue = list()
         self.res_queue = list()
         
+        self.acc_time = 0
+        self.def_intv = 0
+        self.intv_queue = list()
+        self.is_def_appear = False
+        
     def recordStartTime(self, results):
-        if len(results['pattern_x']) == 0:
-            self.time_queue.append(time.time())
-            
-            if len(self.time_queue) == self.time_queue_length:
-                self.start_time = self.time_queue[self.time_queue_length//2]
+        if len(results['pattern']['x']) == 0 and not self.is_start:
+            if self.cur_blank_frames == self.blank_frames:
+                self.is_start = True
+                self.acc_time += self.start_intv_cache / 2
+                
+            if self.cur_blank_frames > 0: 
+                self.start_intv_cache += results['intv']
+            self.cur_blank_frames += 1
         else:
-            self.time_queue.clear()
+            self.cur_blank_frames = 0
+            self.start_intv_cache = 0
             
     def recordTailor(self, results):
-        if len(results['pattern_x'] > 0):
+        self.acc_time += results['intv']
+        self.intv_queue.append(results['intv'])
+        
+        if len(results['pattern']['x']) > 0:
+            if self.is_def_appear:
+                self.def_intv += results['intv']
+                
+            results['def_intv'] = self.def_intv
             self.res_queue.append(results)
+            self.is_def_appear = True
+            self.def_intv = 0
         else:
             self.parseResQueue()
-            self.res_queue = list()
-            
-        self.checkCompleteStatus(results)
+            if self.is_def_appear:
+                self.def_intv += results['intv']
+        
+        self.checkRecordStatus(results)
         
     def parseResQueue(self):
+        if not len(self.res_queue): return 
+        
         overlap = 0
         pre_results = self.res_queue[0]
-        total = len(pre_results['pattern_x'])
+        total = len(pre_results['pattern']['x'])
         
         for i in range(1, len(self.res_queue), 1):
             results = self.res_queue[i]
-            overlap += self.getOverlapResults(pre_results, results)
-            total += len(results['pattern_x'])
+            overlap += self.getResOverlaps(pre_results, results)
+            total += len(results['pattern']['x'])
             pre_results = self.res_queue[i]
             
         self.num_tailors = total - overlap
-        self.tailor_groups += 1
+        self.res_queue.clear()
         
-    def getOverlapResults(self, pre_results, results):
+    def getResOverlaps(self, pre_results, results):
         rev = results['rev']
-        intv = results['intv']
-        pattern_width = pre_results['pattern_width']
+        pattern_width = pre_results['pattern']['width']
         speed = rev * self.machine_perimeter / 60.0 # cm / s
-        pix_offset = (speed * intv) * self.dist_to_pixel
+        pix_offset = (speed * results['def_intv']) * self.dist_to_pixel
         
         pix_pos = list()
-        for i, x in pre_results['pattern_x']:
+        pattern_width = 0
+        for x in pre_results['pattern']['x']:
             pix_pos.append(x - pix_offset)
+            pattern_width += pre_results['pattern']['width']
+        pattern_width /= max(1, len(pre_results['pattern']['x']))
             
         overlap = 0
-        pre_pos, cur_pos = np.meshgrid(pix_pos, results['pattern_x'])
+        pre_pos, cur_pos = np.meshgrid(pix_pos, results['pattern']['x'])
         dist_matrix = abs(pre_pos - cur_pos)
         
         for i in range(dist_matrix.shape[0]):
             dist_slice = dist_matrix[i,:]
-            if len(dist_slice[dist_slice < pattern_height*1.0]) >= 1:
+            if len(dist_slice[dist_slice < pattern_width*1.0]) >= 1:
                 overlap += 1
         
         return overlap
         
-    def checkCompleteStatus(self, results):
+    def checkRecordStatus(self, results):
         rev = results['rev']
-        intv = results['intv']
-        
+        intv = sum(self.intv_queue) / len(self.intv_queue)
         cir_intv = 60 / rev
-        cur_intv = time.time() - self.start_time
-        if abs(cir_time - self.start_time) < 1.5*intv:
+        
+        if abs(self.acc_time - cir_intv) < 1.5*intv:
             self.is_record = True
         
     def __call__(self, results):
-        if self.is_record:
-            return results
-        elif not self.start_time:
-            self.recordStartTime(preprocessResults(results))
+        results = preprocessResults(results) 
+        
+        if not self.is_start:
+            self.recordStartTime(results)
+        elif not self.is_record:
+            self.recordTailor(results)
         else:
-            self.recordTailor(preprocessResults(results))
+            # results['pattern']['pattern_start_time'] = self.pattern_start_time
+            results['pattern']['num_tailors'] = self.num_tailors
+        
+        return results

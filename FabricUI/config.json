@@ -1,5 +1,6 @@
 {
     "General": {
+        "patient_turns": 0,
         "save_mode": "0",
         "save_dir": "/home/taoli/Documents/Results"
     },
@@ -73,8 +74,6 @@
         "queue_length": 3
     },
     "Pattern": {
-        "blank_frames": 3,
-        
-
+        "blank_frames": 5
     }
 }

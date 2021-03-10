@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.09.2021
+Updated on 03.10.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -32,7 +32,7 @@ from device import GXCamera as Camera
 from device import Machine as Machine
 from model import CudaModel as Model
 from monitor import FPSMonitor, RevMonitor 
-from pattern import PatternProcessor as PatternProcessor
+from pattern import PatternFilter as PatternFilter
 
 
 class MainWindow(QMainWindow):
@@ -57,13 +57,16 @@ class MainWindow(QMainWindow):
         self.initWidget()
         self.initRevMonitor()
         self.initFPSMonitor()
-        self.initPatternProcessor()
+        self.initPatternFilter()
         self.messager("\nFabricUI 已开启。", flag="info")
         
     def initParams(self):
         self.rev = -1
         self.is_live = False   # Whether images are showing on the label
         self.is_infer = False # Whether the livestream inference is on
+        self.is_defect_cached = False
+        self.cur_patient_turns = 0
+        self.patient_turns = self.config_matrix['General']['patient_turns']
         
         self.machine_size_mapdict = {
             "single": {
@@ -136,7 +139,7 @@ class MainWindow(QMainWindow):
         fps_params = self.config_matrix['FPSMonitor']
         self.fps_monitor = FPSMonitor(fps_params)
         
-    def initPatternProcessor(self):
+    def initPatternFilter(self):
         pattern_params = self.config_matrix['Pattern']
         
         machine_size = self.config_matrix['Machine']['size']
@@ -146,7 +149,7 @@ class MainWindow(QMainWindow):
         pattern_params['machine_diameter'] = machine_diameter
         pattern_params['resolution_w'] = self.config_matrix['Camera']['resolution_w']
         pattern_params['resolution_h'] = self.config_matrix['Camera']['resolution_h']
-        self.pattern_processor = PatternProcessor(pattern_params)
+        self.pattern_filter = PatternFilter(pattern_params)
         
     def live(self):
         # Abnormal Case 1 - Already running live view
@@ -178,7 +181,12 @@ class MainWindow(QMainWindow):
                 if self.rev_monitor.is_steady:
                     results['intv'] = t_intv
                     results['rev'] = self.rev
-                    results = self.pattern_processor(results)
+                    results = self.pattern_filter(results)
+                    
+                    if 'is_defect' in results:
+                        self.is_defect_cached = True
+                else:
+                    self.pattern_filter.reset()
                 self.canvas.refresh(image, results)
             else: 
                 self.canvas.refresh(image)
@@ -201,7 +209,7 @@ class MainWindow(QMainWindow):
             self.is_infer = False
             self.btnLive.setText("开始检测")
             self.messager("检测中止")
-            self.initPatternProcessor()
+            self.pattern_filter.reset()
         else:
             self.is_infer = True
             self.btnLive.setText("停止检测")
@@ -213,6 +221,13 @@ class MainWindow(QMainWindow):
         self.is_infer = False
         self.btnLive.setText("连接相机")
         self.camera = None
+        
+    def alert(self):
+        self.machine.stop()
+        self.messager("检测到缺陷，请检查布匹并重启检测", flag="error")
+        self.is_infer = False
+        self.btnLive.setText("开始检测")
+        self.pattern_filter.reset()
     
     @pyqtSlot(float)
     def revReceiver(self, rev):
@@ -223,6 +238,15 @@ class MainWindow(QMainWindow):
             self.messager("转速已稳定，检测中...", flag="info")
         else:
             self.messager("正在等待转速稳定，请稍后...", flag="info")
+            
+    def updateDefectStatus(self):
+        if not self.is_defect_cached: return
+        
+        if self.cur_patient_turns == self.patient_turns:
+            self.cur_patient_turns = 0
+            self.alert()
+        else:
+            self.cur_patient_turns += 1
 
     @pyqtSlot()
     def systemConfig(self):
