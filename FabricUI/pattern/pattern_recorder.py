@@ -61,16 +61,17 @@ class PatternRecorder(object):
         
     def reset(self):
         self.is_record = False
-        self.is_start = False
-        self.start_intv_cache = 0
-        
         self.num_tailors = 0
         self.res_queue = list()
-        
-        self.acc_time = 0
         self.def_intv = 0
-        self.intv_queue = list()
+        self.avg_intv = 0
         self.is_def_appear = False
+        self.resetStartTimer()
+        
+    def resetStartTimer(self):
+        self.is_start = False
+        self.acc_time = 0
+        self.start_intv_cache = 0
         
     def recordStartTime(self, results):
         rev = results['rev']
@@ -78,7 +79,7 @@ class PatternRecorder(object):
         field_time = self.camera_field / speed # Time to run through a camera field
         blank_time = self.blank_fields * field_time
         
-        if len(results['pattern']['x']) == 0 and not self.is_start:
+        if len(results['pattern']['x']) == 0:
             if self.start_intv_cache >= blank_time:
                 self.start_intv_cache += results['intv']
                 self.acc_time += self.start_intv_cache / 2
@@ -93,7 +94,7 @@ class PatternRecorder(object):
             
     def recordTailor(self, results):
         self.acc_time += results['intv']
-        self.intv_queue.append(results['intv'])
+        self.updateAvgIntv(results['intv'])
         
         if len(results['pattern']['x']) > 0:
             if self.is_def_appear:
@@ -108,7 +109,7 @@ class PatternRecorder(object):
                 self.def_intv += results['intv']
                 if not self.mightHaveTailor(): self.parseResQueue()
         
-        self.checkRecordStatus(results)
+        if self.isFullCycle(results): self.is_record = True
         
     def mightHaveTailor(self):
         if not len(self.res_queue): return
@@ -161,13 +162,20 @@ class PatternRecorder(object):
         
         return overlap
         
-    def checkRecordStatus(self, results):
+    def updateAvgIntv(self, intv):
+        if self.avg_intv == 0: 
+            self.avg_intv = intv
+        else:
+            self.avg_intv = 0.1 * self.avg_intv + 0.9 * intv
+        
+    def isFullCycle(self, results):
         rev = results['rev']
-        intv = sum(self.intv_queue) / len(self.intv_queue)
         cir_intv = 60 / rev
         
-        if abs(self.acc_time - cir_intv) < 1.5*intv:
-            self.is_record = True
+        if abs(self.acc_time - cir_intv) < 1.5*self.avg_intv:
+            return True
+        else:
+            return False
         
     def __call__(self, results):
         results = preprocessResults(results) 

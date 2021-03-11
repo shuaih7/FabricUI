@@ -3,7 +3,7 @@
 
 '''
 Created on 03.08.2020
-Updated on 03.08.2021
+Updated on 03.11.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -37,6 +37,7 @@ class FPSMonitor(object):
         end_time = time.time()
         intv = end_time - self.start
         self.start = end_time
+        # self.fps_queue.append(intv)
         return intv
         
     def updateFPSStatus(self, fps):
@@ -45,9 +46,6 @@ class FPSMonitor(object):
     def updateIntvStatus(self, intv):
         self.fps_queue.append(intv)
         
-    def getFPS(self):
-        return self.fps_queue.getVal()
-    
-    def getIntv(self):
-        return self.fps_queue.getVal()
+    def getAverage(self):
+        return self.fps_queue.getAverage()
     

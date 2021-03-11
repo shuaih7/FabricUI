@@ -110,13 +110,16 @@ class PatternTest(object):
             
             image = cv2.imread(img_file, -1)
             results = self.getResults(img_file, intv)
-            results = self.recorder(results)
-            #results = self.filter(results)
+            #results = self.recorder(results)
+            results = self.filter(results)
             
             if 'num_tailors' in results['pattern']:
                 print("The number of tailors is", results['pattern']['num_tailors'])
             else:
                 print("Waiting for recording ...")
+                
+            if 'det_tailors' in results['pattern']:
+                print("The number of det tailors is", results['pattern']['det_tailors'])
             
             cv2.imshow("image", drawBoxes(image, results['boxes']))
             cv2.waitKey(80)

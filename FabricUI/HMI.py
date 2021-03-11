@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.10.2021
+Updated on 03.11.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -179,8 +179,8 @@ class MainWindow(QMainWindow):
             if self.is_infer:
                 image, results = self.model(image)
                 if self.rev_monitor.is_steady:
-                    results['intv'] = t_intv
                     results['rev'] = self.rev
+                    results['intv'] = t_intv
                     results = self.pattern_filter(results)
                     
                     if 'is_defect' in results:

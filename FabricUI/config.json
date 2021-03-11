@@ -8,15 +8,14 @@
         "type": "single",
         "size": 30
     },
-
     "Camera": {
         "serial_number": "0000000000",
         "exposure_time": 500,
         "gain": 12,
         "binning": 4,
-        "field": 14
+        "field": 14,
         "resolution_w": 720,
-        "resolution_h": 540,
+        "resolution_h": 540
     },
     "Light": {},
     "Model": {
