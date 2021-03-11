@@ -3,7 +3,7 @@
 
 '''
 Created on 03.02.2021
-Updated on 03.11.2021
+Updated on 03.10.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -32,6 +32,7 @@ class PatternFilter(object):
         self.reset()
         
     def reset(self):
+        self.pattern_start_time = None
         self.pattern_time_queue = list()
         self.res_queue = list()
         self.num_tailors = 0
@@ -39,8 +40,14 @@ class PatternFilter(object):
         self.recorder.reset()
         
     def register(self, results):
-        self.acc_time = 0
+        if self.is_register: return
+        self.pattern_start_time = results['pattern']['pattern_start_time']
         self.num_tailors = results['pattern']['num_tailors']
+        
+        rev = results['rev']
+        speed = rev * self.machine_perimeter / 60.0 # cm / s
+        self.field_time = self.camera_field / speed # Time to run through a camera field
+        self.cir_intv = 60 / rev
         self.is_register = True
         
     def isFullCircle(self):
@@ -85,14 +92,8 @@ class PatternFilter(object):
         self.pattern_time_queue.clear()
         
     def filterResults(self, results):
-        rev = results['rev']
         pattern = results['pattern']
         is_circle = self.isFullCircle()
-        self.acc_time += results['intv']
-        
-        speed = rev * self.machine_perimeter / 60.0 # cm / s
-        self.field_time = self.camera_field / speed # Time to run through a camera field
-        self.cir_intv = 60 / rev
         
         if len(pattern['x']) > 0:
             if is_circle:

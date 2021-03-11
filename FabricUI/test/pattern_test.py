@@ -125,7 +125,7 @@ class PatternTest(object):
 if __name__ == "__main__":
     params = {
         'rev': 19.,
-        'blank_frames': 5,
+        'blank_fields': 1.2,
         'resolution_w': 720,
         'resolution_h': 540,
         'machine_diameter': 70,

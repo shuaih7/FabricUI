@@ -74,6 +74,6 @@
         "queue_length": 3
     },
     "Pattern": {
-        "blank_frames": 5
+        "blank_fields": 1.2
     }
 }

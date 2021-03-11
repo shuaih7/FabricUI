@@ -3,7 +3,7 @@
 
 '''
 Created on 03.09.2021
-Updated on 03.10.2021
+Updated on 03.11.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -51,8 +51,8 @@ class PatternRecorder(object):
         self.updateParams(params)
         
     def updateParams(self, params):
-        self.blank_frames = max(5, params['blank_frames'])
         self.machine_perimeter = np.pi * params['machine_diameter']
+        self.camera_field = params['camera_field']
         self.resolution_w = params['resolution_w']
         self.dist_to_pixel = params['resolution_w'] / params['camera_field'] # pix / cm
         self.params = params
@@ -62,9 +62,7 @@ class PatternRecorder(object):
         self.is_record = False
         self.is_start = False
         self.start_intv_cache = 0
-        self.cur_blank_frames = 0
-        self.pattern_start_time = None
-        self.result_candidate = None
+        self.blank_fields = self.params['blank_fields']
         
         self.num_tailors = 0
         self.res_queue = list()
@@ -75,16 +73,22 @@ class PatternRecorder(object):
         self.is_def_appear = False
         
     def recordStartTime(self, results):
+        rev = results['rev']
+        speed = rev * self.machine_perimeter / 60.0 # cm / s
+        field_time = self.camera_field / speed # Time to run through a camera field
+        blank_time = self.blank_fields * field_time
+        
         if len(results['pattern']['x']) == 0 and not self.is_start:
-            if self.cur_blank_frames == self.blank_frames:
-                self.is_start = True
-                self.acc_time += self.start_intv_cache / 2
-                
-            if self.cur_blank_frames > 0: 
+            if self.start_intv_cache >= blank_time:
                 self.start_intv_cache += results['intv']
-            self.cur_blank_frames += 1
+                self.acc_time += self.start_intv_cache / 2
+                self.is_start = True
+                
+            if self.start_intv_cache > 0: 
+                self.start_intv_cache += results['intv']
+            else:
+                self.start_intv_cache += results['intv']/20
         else:
-            self.cur_blank_frames = 0
             self.start_intv_cache = 0
             
     def recordTailor(self, results):
@@ -162,7 +166,7 @@ class PatternRecorder(object):
         elif not self.is_record:
             self.recordTailor(results)
         else:
-            # results['pattern']['pattern_start_time'] = self.pattern_start_time
+            #results['pattern']['start_time'] = self.pattern_start_time
             results['pattern']['num_tailors'] = self.num_tailors
         
         return results
