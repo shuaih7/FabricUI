@@ -55,6 +55,7 @@ class PatternRecorder(object):
         self.camera_field = params['camera_field']
         self.resolution_w = params['resolution_w']
         self.dist_to_pixel = params['resolution_w'] / params['camera_field'] # pix / cm
+        self.blank_fields = params['blank_fields']
         self.params = params
         self.reset()
         
@@ -62,7 +63,6 @@ class PatternRecorder(object):
         self.is_record = False
         self.is_start = False
         self.start_intv_cache = 0
-        self.blank_fields = self.params['blank_fields']
         
         self.num_tailors = 0
         self.res_queue = list()
@@ -98,17 +98,28 @@ class PatternRecorder(object):
         if len(results['pattern']['x']) > 0:
             if self.is_def_appear:
                 self.def_intv += results['intv']
-                
+            
             results['def_intv'] = self.def_intv
             self.res_queue.append(results)
             self.is_def_appear = True
             self.def_intv = 0
         else:
-            self.parseResQueue()
-            if self.is_def_appear:
+            if self.is_def_appear: 
                 self.def_intv += results['intv']
+                if not self.mightHaveTailor(): self.parseResQueue()
         
         self.checkRecordStatus(results)
+        
+    def mightHaveTailor(self):
+        if not len(self.res_queue): return
+        
+        last_results = self.res_queue[-1]
+        center = max(last_results['pattern']['x']) # Left right turn consider
+        speed = last_results['rev'] * self.machine_perimeter / 60.0 # cm / s
+        cur_pos = center - speed * self.def_intv * self.dist_to_pixel # Left right turn consider
+        
+        if cur_pos >= 0: return True
+        else: return False
         
     def parseResQueue(self):
         if not len(self.res_queue): return 
@@ -166,7 +177,6 @@ class PatternRecorder(object):
         elif not self.is_record:
             self.recordTailor(results)
         else:
-            #results['pattern']['start_time'] = self.pattern_start_time
             results['pattern']['num_tailors'] = self.num_tailors
         
         return results
