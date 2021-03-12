@@ -14,13 +14,12 @@ import numpy as np
 from .pattern_utils import preprocessResults
 
 
-class PatternFilter(object):
+class PatternFilterSimple(object):
     """ Pattern postprocess class to filter out the tailors in the detection results.
-    This class is the full version filter, which could count the number of long defects 
-    in the first cycle, select the defect cluster with most defects and count the numebr 
-    as the number of tailors, then compare the tailor amount with the amount of long defects 
-    in the following cycles. Defect information will be added in the detection results 
-    if the number of long defects larger than the tailor amount.
+    This class is the simplified filter, which could count the number of long defects 
+    in the first cycle as the number of tailors, then compare the tailor amount with 
+    the amount of long defects in the following cycles. Defect information will be added 
+    in the detection results if the number of long defects larger than the tailor amount.
     
     Attributes:
         params: Configuration matrix
@@ -90,24 +89,8 @@ class PatternFilter(object):
         else:
             if self.is_def_appear: 
                 self.def_intv += results['intv']
-                if not self.mightHaveTailor() and len(self.res_queue) > 0: 
-                    self.parseResQueue() # Update the current number of tailors
-                    
-                    if not self.is_record: self.num_tailors = self.cur_num_tailors
-                    self.res_queue.clear()
-        
+                
         self.checkResults(results)
-        
-    def mightHaveTailor(self):
-        if not len(self.res_queue): return
-        
-        last_results = self.res_queue[-1]
-        center = max(last_results['pattern']['x']) # Left right turn consider
-        speed = last_results['rev'] * self.machine_perimeter / 60.0 # cm / s
-        cur_pos = center - speed * self.def_intv * self.dist_to_pixel # Left right turn consider
-        
-        if cur_pos >= 0: return True
-        else: return False
         
     def parseResQueue(self):
         overlap = 0
@@ -120,8 +103,7 @@ class PatternFilter(object):
             total += len(results['pattern']['x'])
             pre_results = self.res_queue[i]
             
-        if self.is_record: self.cur_num_tailors += total - overlap 
-        else: self.cur_num_tailors = max(self.cur_num_tailors, total - overlap)
+        self.cur_num_tailors += total - overlap 
         
     def getResOverlaps(self, pre_results, results):
         rev = results['rev']
@@ -148,7 +130,14 @@ class PatternFilter(object):
         
     def checkResults(self, results):
         if not self.isFullCycle(results): return
-        if not self.is_record: self.is_record = True
+        
+        if len(self.res_queue) > 0:
+            self.parseResQueue() # Update the current number of tailors
+                    
+        if not self.is_record: 
+            self.num_tailors = self.cur_num_tailors
+            self.is_record = True
+        self.res_queue.clear()
         
         pattern = {
             'num_tailors': self.num_tailors,

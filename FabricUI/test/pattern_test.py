@@ -3,7 +3,7 @@
 
 '''
 Created on 03.09.2021
-Updated on 03.10.2021
+Updated on 03.12.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -11,6 +11,7 @@ Author: haoshuai@handaotech.com
 import os
 import sys
 import cv2
+import time
 import numpy as np
 import glob as gb
 
@@ -21,6 +22,7 @@ sys.path.append(abs_path)
 from PascalVocParser import PascalVocXmlParser
 from pattern.pattern_filter import PatternFilter
 from pattern.pattern_recorder import PatternRecorder
+from pattern.pattern_filter_simple import PatternFilterSimple
 
 
 def drawBoxes(img, boxes, color=220, thickness=2):
@@ -111,7 +113,9 @@ class PatternTest(object):
             image = cv2.imread(img_file, -1)
             results = self.getResults(img_file, intv)
             #results = self.recorder(results)
+            start_time = time.time()
             results = self.filter(results)
+            print("Processing time is", time.time() - start_time)
             
             if 'num_tailors' in results['pattern']:
                 print("The number of tailors is", results['pattern']['num_tailors'])
@@ -133,7 +137,7 @@ if __name__ == "__main__":
         'resolution_h': 540,
         'machine_diameter': 70,
         'camera_field': 14,
-        'data_folder': r"F:\TGData\20210223-horizantal-gain8"
+        'data_folder': r"F:\TGData\20210223-vertical-gain12"
     }
 
     pattern_test = PatternTest(params)
