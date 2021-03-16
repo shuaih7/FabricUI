@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.11.2021
+Updated on 03.17.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):
             f.close()
         
         # Initializations
+        self.initCache()
         self.initParams()
         self.initLogger()
         self.initMachine()
@@ -60,10 +61,15 @@ class MainWindow(QMainWindow):
         self.initPatternFilter()
         self.messager("\nFabricUI 已开启。", flag="info")
         
+    def initCache(self):
+        self.normal_pixmap = QPixmap(os.path.join(abs_path, 'icon/pass.png'))
+        self.alert_pixmap = QPixmap(os.path.join(abs_path, 'icon/warn.png'))
+        
     def initParams(self):
         self.rev = -1
+        self.status = 'normal' # Init the current inspection status
         self.is_live = False   # Whether images are showing on the label
-        self.is_infer = False # Whether the livestream inference is on
+        self.is_infer = False  # Whether the livestream inference is on
         self.is_defect_cached = False
         self.cur_patient_turns = 0
         self.patient_turns = self.config_matrix['General']['patient_turns']
@@ -166,6 +172,7 @@ class MainWindow(QMainWindow):
         # Normal Case - Start livestream:
         self.is_live = True
         self.is_infer = False
+        self.setStatus('normal')
         self.btnLive.setText("开始检测")
         
         while self.is_live: 
@@ -212,6 +219,7 @@ class MainWindow(QMainWindow):
             self.pattern_filter.reset()
         else:
             self.is_infer = True
+            self.setStatus('normal')
             self.btnLive.setText("停止检测")
             self.messager("检测中...")
             
@@ -224,15 +232,24 @@ class MainWindow(QMainWindow):
         
     def alert(self):
         self.machine.stop()
+        self.setStatus('alert')
         self.messager("检测到缺陷，请检查布匹并重启检测", flag="error")
         self.is_infer = False
         self.btnLive.setText("开始检测")
         self.pattern_filter.reset()
+        
+    def setStatus(self, status):
+        if status == self.status: return
+        elif status == 'alert':
+            self.lbStatus.setPixmap(self.alert_pixmap)
+        elif status == 'normal':
+            elf.lbStatus.setPixmap(self.normal_pixmap)
+        self.status = status
     
     @pyqtSlot(float)
     def revReceiver(self, rev):
         self.rev = rev
-        self.revLabel.setText(str(rev))
+        self.lbRev.setText(str(rev))
         
         if self.rev_monitor.is_steady:
             self.messager("转速已稳定，检测中...", flag="info")
@@ -251,10 +268,6 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def systemConfig(self):
         self.configWidget.showConfig()
-        
-    @pyqtSlot()
-    def reset(self):
-        pass
         
     @pyqtSlot(str)
     def generalConfig(self, module):

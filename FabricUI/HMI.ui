@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>750</height>
+    <width>1304</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1200</width>
-    <height>750</height>
+    <width>900</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -36,42 +36,32 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>1000</width>
-     <height>700</height>
+     <width>900</width>
+     <height>600</height>
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,5,1,20,2">
+     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,5">
+      <property name="leftMargin">
+       <number>15</number>
+      </property>
+      <property name="topMargin">
+       <number>15</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>15</number>
+      </property>
       <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="9,3,3,4,1,4,1,6">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="6,4,4,4,4">
         <property name="spacing">
-         <number>10</number>
+         <number>15</number>
         </property>
         <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>10</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>20</number>
+         <number>15</number>
         </property>
         <item>
          <widget class="QLabel" name="logoLabel">
@@ -84,7 +74,7 @@
           <property name="minimumSize">
            <size>
             <width>280</width>
-            <height>240</height>
+            <height>180</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -97,10 +87,10 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>icon/HDTech.png</pixmap>
+           <pixmap>icon/HDTech_Logo.png</pixmap>
           </property>
           <property name="scaledContents">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -108,9 +98,9 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,2">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="lbStatus">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -138,72 +128,103 @@
            </widget>
           </item>
           <item>
-           <widget class="PushButton" name="btnReset">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,6,6,1">
+            <property name="spacing">
+             <number>0</number>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>80</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
-            </property>
-            <property name="text">
-             <string>复位</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>icon/reset.png</normaloff>icon/reset.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>30</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
-          <property name="spacing">
-           <number>20</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="styleSheet">
-             <string notr="true">font: bold;font-size: 20px;height: 36px;width: 100px</string>
-            </property>
-            <property name="text">
-             <string>当前转速</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="revLabel">
-            <property name="styleSheet">
-             <string notr="true">font: bold;font-size: 20px;height: 36px;width: 100px</string>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+              <property name="spacing">
+               <number>20</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="lbTextRev">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>当前转速</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbRev">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
+              <property name="spacing">
+               <number>20</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="lbTextTailor">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>开幅线数</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbTailor">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -219,7 +240,7 @@
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
+           <string notr="true">font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
           </property>
           <property name="text">
            <string>连接相机</string>
@@ -243,19 +264,6 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="PushButton" name="btnConfig">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -264,7 +272,7 @@
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
+           <string notr="true">font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
           </property>
           <property name="text">
            <string>系统设置</string>
@@ -288,22 +296,9 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="QLabel" name="statusLabel">
           <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 20px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(222,222,222)</string>
+           <string notr="true">font: bold;font-size: 23px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(222,222,222)</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
@@ -325,31 +320,12 @@
        </layout>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
-        <property name="spacing">
-         <number>8</number>
-        </property>
-        <property name="topMargin">
-         <number>20</number>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="20">
+        <property name="leftMargin">
+         <number>25</number>
         </property>
         <property name="rightMargin">
-         <number>20</number>
-        </property>
-        <property name="bottomMargin">
-         <number>20</number>
+         <number>25</number>
         </property>
         <item>
          <widget class="Canvas" name="canvas">
@@ -372,19 +348,6 @@
         </item>
        </layout>
       </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
      </layout>
     </item>
    </layout>
@@ -394,7 +357,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1304</width>
      <height>26</height>
     </rect>
    </property>
@@ -422,28 +385,12 @@
    <slot>systemConfig()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>283</x>
-     <y>585</y>
+     <x>139</x>
+     <y>567</y>
     </hint>
     <hint type="destinationlabel">
      <x>280</x>
      <y>750</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnReset</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>reset()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>291</x>
-     <y>381</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>151</x>
-     <y>787</y>
     </hint>
    </hints>
   </connection>
@@ -454,12 +401,12 @@
    <slot>live()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>228</x>
-     <y>514</y>
+     <x>140</x>
+     <y>458</y>
     </hint>
     <hint type="destinationlabel">
      <x>275</x>
-     <y>787</y>
+     <y>754</y>
     </hint>
    </hints>
   </connection>

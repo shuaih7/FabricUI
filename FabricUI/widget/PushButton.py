@@ -18,12 +18,12 @@ class PushButton(QPushButton):
     
     def __init__(self, parent=None):
         super(PushButton, self).__init__(parent)
-        self.main_style = "font: bold; font-size: 27px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180);"
+        self.main_style = "font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180);"
         self.cfg_style = "font: bold; font-size: 20px;height: 30px;width: 80px; border:2px groove gray;border-radius:10px;padding:2px 4px;"
         self.color = "background-color:rgb(180,180,180)"
         self.press_color = "background-color: rgb(140,140,140)"
         
-        self.mainBtnList = ["btnLive", "btnConfig", "btnReset"]
+        self.mainBtnList = ["btnLive", "btnConfig"]
 
     def mousePressEvent(self, event):
         super(PushButton, self).mousePressEvent(event)
