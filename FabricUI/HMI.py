@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.17.2021
+Updated on 03.18.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -70,22 +70,9 @@ class MainWindow(QMainWindow):
         self.status = 'normal' # Init the current inspection status
         self.is_live = False   # Whether images are showing on the label
         self.is_infer = False  # Whether the livestream inference is on
-        self.is_defect_cached = False
         self.cur_patient_turns = 0
         self.patient_turns = self.config_matrix['General']['patient_turns']
-        
-        self.machine_size_mapdict = {
-            "single": {
-                30: 70,
-                34: 77.5,
-                38: 82.5
-            },
-            "dual": {
-                30: 70,
-                34: 77.5,
-                38: 82.5
-            }
-        }
+        self.resetDefectMatrix()
         
     def initLogger(self):
         self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), 
@@ -101,6 +88,7 @@ class MainWindow(QMainWindow):
     def initMachine(self):
         machine_params = self.config_matrix['Machine']
         self.machine = Machine(machine_params)
+        self.machine_size_mapdict = machine_params['size_mapdict']
         
     def initCamera(self):
         self.messager("初始化相机，正在连接...")
@@ -150,12 +138,21 @@ class MainWindow(QMainWindow):
         
         machine_size = self.config_matrix['Machine']['size']
         machine_type = self.config_matrix['Machine']['type']
-        machine_diameter = self.machine_size_mapdict[machine_type][machine_size]
+        machine_diameter = self.machine_size_mapdict[machine_type][str(machine_size)]
         pattern_params['camera_field'] = self.config_matrix['Camera']['field']
         pattern_params['machine_diameter'] = machine_diameter
         pattern_params['resolution_w'] = self.config_matrix['Camera']['resolution_w']
         pattern_params['resolution_h'] = self.config_matrix['Camera']['resolution_h']
         self.pattern_filter = PatternFilter(pattern_params)
+        
+    def resetDefectMatrix(self):
+        self.defect_matrix = {
+            'is_defect': False,
+            'details': {
+                'defect': False,
+                'striation': False
+            }
+        } 
         
     def live(self):
         # Abnormal Case 1 - Already running live view
@@ -189,9 +186,7 @@ class MainWindow(QMainWindow):
                     results['rev'] = self.rev
                     results['intv'] = t_intv
                     results = self.pattern_filter(results)
-                    
-                    if 'is_defect' in results:
-                        self.is_defect_cached = True
+                    self.processResults(results)
                 else:
                     self.pattern_filter.reset()
                 self.canvas.refresh(image, results)
@@ -230,10 +225,23 @@ class MainWindow(QMainWindow):
         self.btnLive.setText("连接相机")
         self.camera = None
         
+    def processResults(self, results):
+        labels = results['labels']
+        pattern = results['pattern']
+        
+        if 'num_tailors' in pattern:
+            self.lbTailor.setText(str(pattern['num_tailors']))
+        
+        if 'is_defect' in pattern:
+            self.defect_matrix['details']['defect'] = True
+            self.defect_matrix['is_defect'] = True
+        if 1 in labels:
+            self.defect_matrix['details']['striation'] = True
+            self.defect_matrix['is_defect'] = True
+        
     def alert(self):
-        self.machine.stop()
+        self.machine.stop() # Stop the weaving machine
         self.setStatus('alert')
-        self.messager("检测到缺陷，请检查布匹并重启检测", flag="error")
         self.is_infer = False
         self.btnLive.setText("开始检测")
         self.pattern_filter.reset()
@@ -242,8 +250,20 @@ class MainWindow(QMainWindow):
         if status == self.status: return
         elif status == 'alert':
             self.lbStatus.setPixmap(self.alert_pixmap)
+            def_info_text = '检测到 '
+            
+            if self.defect_matrix['details']['defect']:
+                def_info_text += '长疵' + ' '
+            if self.defect_matrix['details']['striation']:
+                def_info_text += '横纹' + ' '
+                    
+            def_info_text += '缺陷！'
+            self.lbTextAlert.setAlert(def_info_text)
+            self.messager(def_info_text, flag="error")
+            
         elif status == 'normal':
-            elf.lbStatus.setPixmap(self.normal_pixmap)
+            self.lbStatus.setPixmap(self.normal_pixmap)
+            self.lbTextAlert.reset()
         self.status = status
     
     @pyqtSlot(float)
@@ -257,18 +277,19 @@ class MainWindow(QMainWindow):
             self.messager("转速已稳定，检测中...", flag="info")
             self.lbRevStatus.setSteady(True)
         else:
-            self.messager("正在等待转速稳定，请稍后...", flag="info")
+            self.messager("正在等待转速稳定...", flag="info")
             self.lbRevStatus.setSteady(False)
             
     def updateDefectStatus(self, is_rev_steady):
-        if not self.is_defect_cached: return
+        if not self.defect_matrix['is_defect']: return
         
         elif not is_rev_steady:
-            self.is_defect_cached = False
+            self.resetDefectMatrix()
             self.cur_patient_turns = 0
             
         elif self.cur_patient_turns == self.patient_turns:
             self.cur_patient_turns = 0
+            self.resetDefectMatrix()
             self.alert()
             
         else:

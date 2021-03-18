@@ -66,10 +66,13 @@ class CudaModel(Model):
         results = {}
         bboxes = np.array(outputs[0])
         if bboxes.shape[1] != 6:
-            return {}
-        labels = bboxes[:, 0].astype('int32')
-        scores = bboxes[:, 1].astype('float32')
-        boxes = bboxes[:, 2:].astype('float32')
+            labels = []
+            scores = []
+            boxes = []
+        else:
+            labels = bboxes[:, 0].astype('int32')
+            scores = bboxes[:, 1].astype('float32')
+            boxes = bboxes[:, 2:].astype('float32')
         
         boxes = map_boxes(boxes, self.input_shape, origin.shape[:2])
         results['boxes'] = boxes

@@ -6,12 +6,23 @@
     },
     "Machine": {
         "type": "single",
-        "size": 30
+        "size": 30,
+        "size_mapdict": {
+            "single": {
+                "30": 70.0,
+                "34": 77.5,
+                "38": 82.5
+            },
+            "dual": {
+                "30": 70.0,
+                "34": 77.5
+            }
+        }
     },
     "Camera": {
         "serial_number": "0000000000",
-        "exposure_time": 500,
-        "gain": 12,
+        "exposure_time": 2000,
+        "gain": 24,
         "binning": 4,
         "field": 14,
         "resolution_w": 720,
@@ -34,16 +45,16 @@
         "input_channel": 3,
         "yolo_anchors": [
             [
-                718,
-                25
+                260,
+                16
             ],
             [
-                31,
-                288
+                346,
+                18
             ],
             [
-                33,
-                538
+                14,
+                349
             ]
         ],
         "yolo_masks": [
@@ -73,6 +84,10 @@
         "queue_length": 3
     },
     "Pattern": {
-        "blank_fields": 1.2
+        "blank_fields": 1.2,
+        "camera_field": 14,
+        "machine_diameter": 70.0,
+        "resolution_w": 720,
+        "resolution_h": 540
     }
 }

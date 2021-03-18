@@ -3,7 +3,7 @@
 
 '''
 Created on 03.09.2021
-Updated on 03.12.2021
+Updated on 03.18.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -155,7 +155,7 @@ class PatternFilter(object):
             'det_tailors': self.cur_num_tailors
         }
         if self.num_tailors < self.cur_num_tailors:
-            pattern['defect_info'] = "检测到长疵缺陷！"
+            pattern['is_defect'] = True
             
         results['pattern'] = pattern
         self.cur_num_tailors = 0

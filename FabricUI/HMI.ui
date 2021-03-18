@@ -157,7 +157,7 @@
                  <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
                 </property>
                 <property name="text">
-                 <string>0</string>
+                 <string>-</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -190,7 +190,7 @@
                  <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
                 </property>
                 <property name="text">
-                 <string>0</string>
+                 <string>-</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -282,12 +282,12 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="lbAlert">
+         <widget class="TextAlertLabel" name="lbTextAlert">
           <property name="styleSheet">
            <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
           </property>
           <property name="text">
-           <string/>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -461,6 +461,11 @@
    <class>RevStatusLabel</class>
    <extends>QLabel</extends>
    <header location="global">widget/RevStatusLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TextAlertLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">widget/TextAlertLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

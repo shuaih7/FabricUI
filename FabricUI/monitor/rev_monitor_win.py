@@ -3,7 +3,7 @@
 
 '''
 Created on 11.20.2020
-Updated on 03.02.2021
+Updated on 03.18.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -31,4 +31,9 @@ class RevMonitor(QThread):
         self.rev_queue = list()
 
     def run(self):
-        self.revSignal.emit(0.0)
+        cur_cycle = 0
+        while True:
+            time.sleep(3)
+            cur_cycle += 1
+            self.revSignal.emit(20.0)
+            if cur_cycle == self.steady_turns: self.is_steady = True
