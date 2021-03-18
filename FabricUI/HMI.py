@@ -250,14 +250,18 @@ class MainWindow(QMainWindow):
         if status == self.status: return
         elif status == 'alert':
             self.lbStatus.setPixmap(self.alert_pixmap)
-            def_info_text = '检测到 '
+            is_long_defect = self.defect_matrix['details']['defect']
+            is_striation = self.defect_matrix['details']['striation']
             
-            if self.defect_matrix['details']['defect']:
-                def_info_text += '长疵' + ' '
-            if self.defect_matrix['details']['striation']:
-                def_info_text += '横纹' + ' '
+            if is_long_defect and is_striation:
+                def_info_text = r'检测到长疵和横路，请及时处理！'
+            elif is_long_defect:
+                def_info_text = r'检测到长疵，请及时处理！'
+            elif is_striation:
+                def_info_text = r'检测到横路，请及时处理！'
+            else:
+                def_info_text = r'模型错误！'
                     
-            def_info_text += '缺陷！'
             self.lbTextAlert.setAlert(def_info_text)
             self.messager(def_info_text, flag="error")
             
@@ -288,9 +292,9 @@ class MainWindow(QMainWindow):
             self.cur_patient_turns = 0
             
         elif self.cur_patient_turns == self.patient_turns:
+            self.alert()
             self.cur_patient_turns = 0
             self.resetDefectMatrix()
-            self.alert()
             
         else:
             self.cur_patient_turns += 1

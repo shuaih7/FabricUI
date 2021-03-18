@@ -139,14 +139,13 @@ class PatternFilterSimple(object):
             self.is_record = True
         self.res_queue.clear()
         
-        pattern = {
-            'num_tailors': self.num_tailors,
-            'det_tailors': self.cur_num_tailors
-        }
+        pattern = results['pattern']
+        pattern['num_tailors'] = self.num_tailors
+        pattern['det_tailors'] = self.cur_num_tailors
+        
         if self.num_tailors < self.cur_num_tailors:
             pattern['is_defect'] = True
             
-        results['pattern'] = pattern
         self.cur_num_tailors = 0
         self.resetStartTimer()
         

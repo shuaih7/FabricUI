@@ -148,16 +148,16 @@ class PatternFilter(object):
         
     def checkResults(self, results):
         if not self.isFullCycle(results): return
-        if not self.is_record: self.is_record = True
         
-        pattern = {
-            'num_tailors': self.num_tailors,
-            'det_tailors': self.cur_num_tailors
-        }
-        if self.num_tailors < self.cur_num_tailors:
+        pattern = results['pattern']
+        pattern['num_tailors'] = self.num_tailors
+        pattern['det_tailors'] = self.cur_num_tailors
+
+        if self.num_tailors < self.cur_num_tailors and self.is_record:
             pattern['is_defect'] = True
-            
-        results['pattern'] = pattern
+        elif not self.is_record: 
+            self.is_record = True
+        
         self.cur_num_tailors = 0
         self.resetStartTimer()
         
