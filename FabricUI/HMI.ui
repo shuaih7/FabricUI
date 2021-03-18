@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1304</width>
-    <height>800</height>
+    <width>1391</width>
+    <height>764</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,26 +42,27 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,5">
-      <property name="leftMargin">
-       <number>15</number>
-      </property>
-      <property name="topMargin">
-       <number>15</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>15</number>
-      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,10,25,1">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="6,4,4,4,4">
-        <property name="spacing">
-         <number>15</number>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="leftMargin">
-         <number>15</number>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>13</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="10,8,2,12,1">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
         </property>
         <item>
          <widget class="QLabel" name="logoLabel">
@@ -87,7 +88,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>icon/HDTech_Logo.png</pixmap>
+           <pixmap>icon/HDTLOGO.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -98,7 +99,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,2">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
            <widget class="QLabel" name="lbStatus">
             <property name="maximumSize">
@@ -128,60 +129,14 @@
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,6,6,1">
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1">
             <property name="spacing">
              <number>0</number>
             </property>
             <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
-              <property name="spacing">
-               <number>20</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="lbTextRev">
-                <property name="styleSheet">
-                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
-                </property>
-                <property name="text">
-                 <string>当前转速</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lbRev">
-                <property name="styleSheet">
-                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
               <property name="spacing">
-               <number>20</number>
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="lbTextTailor">
@@ -212,110 +167,228 @@
              </layout>
             </item>
             <item>
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
+             <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+              <property name="spacing">
+               <number>0</number>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
+              <item>
+               <widget class="QLabel" name="lbTextRev">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>当前转速</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbRev">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1">
+              <property name="spacing">
+               <number>0</number>
               </property>
-             </spacer>
+              <item>
+               <widget class="QLabel" name="lbTextRevStatus">
+                <property name="styleSheet">
+                 <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
+                </property>
+                <property name="text">
+                 <string>转速状态</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,1">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>8</number>
+                </property>
+                <property name="topMargin">
+                 <number>12</number>
+                </property>
+                <property name="rightMargin">
+                 <number>8</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>12</number>
+                </property>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="RevStatusLabel" name="lbRevStatus">
+                  <property name="styleSheet">
+                   <string notr="true">border:2px groove gray; border-radius:15px;padding:1px 4px;background-color:rgb(255,0,0)</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="PushButton" name="btnLive">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+         <widget class="QLabel" name="lbAlert">
           <property name="styleSheet">
-           <string notr="true">font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
+           <string notr="true">font: bold;font-size: 25px;height: 36px;width: 100px</string>
           </property>
           <property name="text">
-           <string>连接相机</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>icon/startdet.png</normaloff>icon/startdet.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="PushButton" name="btnConfig">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>20</number>
           </property>
-          <property name="styleSheet">
-           <string notr="true">font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
+          <property name="leftMargin">
+           <number>25</number>
           </property>
-          <property name="text">
-           <string>系统设置</string>
+          <property name="topMargin">
+           <number>10</number>
           </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>icon/syssetting.png</normaloff>icon/syssetting.png</iconset>
+          <property name="rightMargin">
+           <number>25</number>
           </property>
-          <property name="iconSize">
-           <size>
-            <width>30</width>
-            <height>30</height>
-           </size>
+          <property name="bottomMargin">
+           <number>10</number>
           </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-         </widget>
+          <item>
+           <widget class="PushButton" name="btnLive">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
+            </property>
+            <property name="text">
+             <string>连接相机</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>icon/startdet.png</normaloff>icon/startdet.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>27</width>
+              <height>27</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="PushButton" name="btnConfig">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: bold; font-size: 35px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(180,180,180)</string>
+            </property>
+            <property name="text">
+             <string>系统设置</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>icon/syssetting.png</normaloff>icon/syssetting.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QLabel" name="statusLabel">
-          <property name="styleSheet">
-           <string notr="true">font: bold;font-size: 23px;height: 36px;width: 100px; border:2px groove gray; border-radius:15px;padding:2px 4px;background-color:rgb(222,222,222)</string>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-          <property name="text">
-           <string>欢迎使用！</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-          <property name="indent">
-           <number>-1</number>
-          </property>
-         </widget>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -324,8 +397,14 @@
         <property name="leftMargin">
          <number>25</number>
         </property>
-        <property name="rightMargin">
+        <property name="topMargin">
          <number>25</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>15</number>
         </property>
         <item>
          <widget class="Canvas" name="canvas">
@@ -348,19 +427,22 @@
         </item>
        </layout>
       </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>13</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1304</width>
-     <height>26</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
@@ -375,6 +457,11 @@
    <extends>QPushButton</extends>
    <header location="global">widget/PushButton.h</header>
   </customwidget>
+  <customwidget>
+   <class>RevStatusLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">widget/RevStatusLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -386,7 +473,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>139</x>
-     <y>567</y>
+     <y>662</y>
     </hint>
     <hint type="destinationlabel">
      <x>280</x>
@@ -401,8 +488,8 @@
    <slot>live()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>458</y>
+     <x>121</x>
+     <y>500</y>
     </hint>
     <hint type="destinationlabel">
      <x>275</x>

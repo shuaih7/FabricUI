@@ -249,19 +249,28 @@ class MainWindow(QMainWindow):
     @pyqtSlot(float)
     def revReceiver(self, rev):
         self.rev = rev
+        is_rev_steady = self.rev_monitor.is_steady
+        self.updateDefectStatus(is_rev_steady)
         self.lbRev.setText(str(rev))
         
-        if self.rev_monitor.is_steady:
+        if is_rev_steady:
             self.messager("转速已稳定，检测中...", flag="info")
+            self.lbRevStatus.setSteady(True)
         else:
             self.messager("正在等待转速稳定，请稍后...", flag="info")
+            self.lbRevStatus.setSteady(False)
             
-    def updateDefectStatus(self):
+    def updateDefectStatus(self, is_rev_steady):
         if not self.is_defect_cached: return
         
-        if self.cur_patient_turns == self.patient_turns:
+        elif not is_rev_steady:
+            self.is_defect_cached = False
+            self.cur_patient_turns = 0
+            
+        elif self.cur_patient_turns == self.patient_turns:
             self.cur_patient_turns = 0
             self.alert()
+            
         else:
             self.cur_patient_turns += 1
 
@@ -294,7 +303,6 @@ class MainWindow(QMainWindow):
         
     def messager(self, msg, flag="info"): 
         self.logger_flags[flag.lower()](msg)
-        self.statusLabel.setText(msg)
         
     def closeEvent(self, ev):   
         reply = QMessageBox.question(
