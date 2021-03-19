@@ -6,6 +6,7 @@
     },
     "Machine": {
         "type": "single",
+        "input_pin": 10,
         "size": 30,
         "size_mapdict": {
             "single": {
