@@ -141,7 +141,7 @@ class PatternFilter(object):
         
         for i in range(dist_matrix.shape[0]):
             dist_slice = dist_matrix[i,:]
-            if len(dist_slice[dist_slice < pattern_width*1.0]) >= 1:
+            if len(dist_slice[dist_slice < pattern_width*2.0]) >= 1:
                 overlap += 1
         
         return overlap
