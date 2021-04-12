@@ -40,7 +40,7 @@ class SaveWorker(QThread):
         self.params = params
           
     async def saveFunc(self, image, results):
-        fname = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3]
+        fname = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3]
         
         print('saving...')
         prefix = os.path.join(self.prefix_dir, fname)
@@ -76,16 +76,17 @@ class SaveWorker(QThread):
     def initSaveStatus(self, results):
         rev = results['rev']
         intv = results['intv']
+        self.async_saved = 0
         self.frames_saving = 0
         self.frames_to_save = int((60/rev)/intv * self.save_cycles) + 1
         self.is_start = True
         
-        parent_dir = os.path.join(self.save_dir, datetime.utcnow().strftime('%Y-%m-%d'))
+        parent_dir = os.path.join(self.save_dir, datetime.now().strftime('%Y-%m-%d'))
         if not os.path.exists(parent_dir):
             try: os.mkdir(parent_dir)
             except Exception as expt: print(expt)
         
-        self.prefix_dir = os.path.join(parent_dir, datetime.utcnow().strftime('%H-%M-%S-%f')[:-3])
+        self.prefix_dir = os.path.join(parent_dir, datetime.now().strftime('%H-%M-%S-%f')[:-3])
         if not os.path.exists(self.prefix_dir):
             try: os.mkdir(self.prefix_dir)
             except Exception as expt: print(expt)

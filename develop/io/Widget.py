@@ -37,7 +37,7 @@ class Widget(QWidget):
     def __init__(self, parent=None):
         super(Widget, self).__init__(parent)
         loadUi(os.path.join(os.path.abspath(os.path.dirname(__file__)), "Widget.ui"), self)
-        self.length = 150
+        self.length = 240
         self.loadImages()
         self.saver_worker = SaveWorker(save_params)
         self.saver_worker.start()
