@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-Created on 04.01.2020
-Updated on 04.12.2021
+Created on 04.12.2020
+Updated on 04.13.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -41,8 +41,6 @@ class SaveWorker(QThread):
           
     async def saveFunc(self, image, results):
         fname = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3]
-        
-        print('saving...')
         prefix = os.path.join(self.prefix_dir, fname)
         
         cv2.imwrite(prefix + '.png', image)
@@ -51,7 +49,6 @@ class SaveWorker(QThread):
             f.write(res_obj)
             f.close()
         self.async_saved += 1
-        print('Finished...')
         
     def __call__(self, image, results):
         if not self.is_start and self.checkMutex():
