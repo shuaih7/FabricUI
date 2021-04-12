@@ -3,12 +3,14 @@
 
 """
 Created on 11.25.2020
-Updated on 02.07.2020
+Updated on 04.12.2020
 
 Author: haoshuai@handaotech.com
 """
 
-import os, sys, json
+import os
+import sys
+import json
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot

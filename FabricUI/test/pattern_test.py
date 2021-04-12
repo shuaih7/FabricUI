@@ -21,8 +21,12 @@ sys.path.append(abs_path)
 
 from PascalVocParser import PascalVocXmlParser
 from pattern.pattern_filter import PatternFilter
-from pattern.pattern_recorder import PatternRecorder
-from pattern.pattern_filter_simple import PatternFilterSimple
+
+
+map_dict = {
+    'defect': 0,
+    'striation': 1
+}
 
 
 def drawBoxes(img, boxes, color=220, thickness=2):
@@ -63,12 +67,10 @@ def getTimeInterval(pre_img_file, img_file) -> float:
 class PatternTest(object):
     def __init__(self, params):
         self.pvoc_parser = PascalVocXmlParser()
-        self.recorder = PatternRecorder(params)
         self.filter = PatternFilter(params)
         self.updateParams(params)
     
     def updateParams(self, params):
-        self.recorder.updateParams(params)
         self.filter.updateParams(params)
         self.params = params
         
@@ -76,9 +78,10 @@ class PatternTest(object):
         labels = list()
         scores = list()
         boxes = self.pvoc_parser.get_boxes(xml_file)
+        orig_labels = self.pvoc_parser.get_labels(xml_file)
         
-        for box in boxes:
-            labels.append(0)
+        for box, label in zip(boxes, orig_labels):
+            labels.append(map_dict[label])
             scores.append(0.99)
         
         return boxes, labels, scores
@@ -112,7 +115,6 @@ class PatternTest(object):
             
             image = cv2.imread(img_file, -1)
             results = self.getResults(img_file, intv)
-            #results = self.recorder(results)
             start_time = time.time()
             results = self.filter(results)
             print("Processing time is", time.time() - start_time)
@@ -124,6 +126,8 @@ class PatternTest(object):
                 
             if 'det_tailors' in results['pattern']:
                 print("The number of det tailors is", results['pattern']['det_tailors'])
+            if 'is_striation' in results['pattern']:
+                print("Find Striation defect!!!")
             
             cv2.imshow("image", drawBoxes(image, results['boxes']))
             cv2.waitKey(80)
@@ -137,7 +141,7 @@ if __name__ == "__main__":
         'resolution_h': 540,
         'machine_diameter': 70,
         'camera_field': 14,
-        'data_folder': r"F:\TGData\20210223-vertical-gain12"
+        'data_folder': r"E:\Projects\Fabric_Defect_Detection\model_dev\v1.2.0\dataset\train\darkgray-300mus-12gain-horizontal_type2+vertical"
     }
 
     pattern_test = PatternTest(params)

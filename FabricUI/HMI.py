@@ -235,7 +235,7 @@ class MainWindow(QMainWindow):
         if 'is_defect' in pattern:
             self.defect_matrix['details']['defect'] = True
             self.defect_matrix['is_defect'] = True
-        if 1 in labels:
+        if 'is_striation' in pattern:
             self.defect_matrix['details']['striation'] = True
             self.defect_matrix['is_defect'] = True
         
@@ -308,6 +308,12 @@ class MainWindow(QMainWindow):
         if module != "General": return
         params = self.config_matrix[module]
         self.messager("已更新常规设置。")
+        
+    @pyqtSlot(str)
+    def machineConfig(self, module):
+        if module != "Machine": return
+        params = self.machine[module]
+        self.messager("已更新圆织机设置。")
         
     @pyqtSlot(str)
     def cameraConfig(self, module):

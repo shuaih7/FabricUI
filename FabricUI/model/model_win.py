@@ -47,6 +47,9 @@ class CudaModel(Model):
         self.input_shape = np.array([input_h, input_w], dtype=np.int32)
         self.preprocessor = PreprocessYOLO(params)
         
+    def loadModel(self):
+        pass
+        
     def preprocess(self, image):
         origin, image = self.preprocessor(image)
         return origin, image

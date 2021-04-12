@@ -40,6 +40,13 @@ class PatternFilter(object):
         self.params = params
         self.reset()
         
+        # Temporary - striation filter
+        self.s_len = 3
+        self.num_s_frames = 0
+        self.pre_s_boxes = None
+        self.is_striation = False
+        ##############################
+        
     def reset(self):
         self.avg_intv = 0          # Exponentially averaged time interval between two consecutive frames
         self.avg_width = 0         # Exponentially averaged defect width
@@ -152,6 +159,9 @@ class PatternFilter(object):
         pattern = results['pattern']
         pattern['num_tailors'] = self.num_tailors
         pattern['det_tailors'] = self.cur_num_tailors
+        
+        if self.is_striation: 
+            pattern['is_striation'] = True
 
         if self.num_tailors < self.cur_num_tailors and self.is_record:
             pattern['is_defect'] = True
@@ -181,9 +191,52 @@ class PatternFilter(object):
             return True
         else:
             return False
+            
+    def processStriation(self, results):
+        s_boxes = results['pattern']['s_boxes']
+        if len(s_boxes) == 0: 
+            self.pre_s_boxes = None
+            self.num_s_frames = 0
+            return
+        elif self.pre_s_boxes is None:
+            self.pre_s_boxes = s_boxes
+            self.num_s_frames = 1
+            return
+            
+        self.parseStriation(s_boxes)
+        if self.num_s_frames == self.s_len:
+            self.is_striation = True
+            self.pre_s_boxes = None
+            self.num_s_frames = 0
+        
+    def parseStriation(self, s_boxes):
+        new_s_boxes = list()
+        
+        for box in s_boxes:
+            xmin, ymin, xmax, ymax = box
+            height = abs(ymax - ymin)
+            y = (ymax + ymin) / 2
+            
+            for i in range(len(self.pre_s_boxes)):
+                pre_box = self.pre_s_boxes[i]
+                pre_xmin, pre_ymin, pre_xmax, pre_ymax = pre_box
+                pre_height = abs(pre_ymax - pre_ymin)
+                pre_y = (pre_ymax + pre_ymin) / 2
+                
+                if abs(pre_y - y) <= (pre_height + height) * 0.8:   
+                    new_s_boxes.append(box)
+                    self.pre_s_boxes.pop(i)
+                    break
+        
+        if len(new_s_boxes) == 0: 
+            self.pre_s_boxes = None
+        else: 
+            self.num_s_frames += 1
+            self.pre_s_boxes = new_s_boxes
         
     def __call__(self, results):
         results = preprocessResults(results) 
+        self.processStriation(results)
         
         if not self.is_start: 
             self.recordStartTime(results)
