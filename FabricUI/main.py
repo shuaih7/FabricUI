@@ -3,9 +3,9 @@
 
 '''
 Created on 11.19.2020
-Updated on 11.19.2020
+Updated on 03.19.2020
 
-Author: haoshaui@handaotech.com
+Author: haoshuai@handaotech.com
 '''
 
 import sys
@@ -18,7 +18,7 @@ from HMI import MainWindow
 def main():
     Window = MainWindow()
     Window.showMaximized()
-    Window.liveStream()
+    Window.live()
     sys.exit(app.exec_())
 
 

@@ -5,14 +5,10 @@ import numpy as np
 import pycuda.driver as cuda
 import tensorrt as trt
 
-try:
-    # Sometimes python2 does not understand FileNotFoundError
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
 
 def GiB(val):
     return val * 1 << 30
+
 
 def find_sample_data(description="Runs a TensorRT Python sample", subfolder="", find_files=[]):
     '''

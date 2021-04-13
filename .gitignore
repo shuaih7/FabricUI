@@ -1,1 +1,5 @@
-FabricUI/model/trt/*.trt
+FabricUI/model/win
+FabricUI/logging.txt
+FabricUI/__pycache__
+*.log
+FabricUI/logging.log

@@ -3,23 +3,8 @@ from PIL import Image
 import numpy as np
 
 
-# YOLOv3-608 has been trained with these 80 categories from COCO:
-# Lin, Tsung-Yi, et al. "Microsoft COCO: Common Objects in Context."
-# European Conference on Computer Vision. Springer, Cham, 2014.
-
-"""
-def load_label_categories(label_file_path):
-    categories = [line.rstrip('\n') for line in open(label_file_path)]
-    return categories
-
-LABEL_FILE_PATH = 'coco_labels.txt'
-ALL_CATEGORIES = load_label_categories(LABEL_FILE_PATH)
-"""
-ALL_CATEGORIES = ["defect", "striation"]
-
-# Let's make sure that there are 80 classes, as expected for the COCO data set:
+ALL_CATEGORIES = ["defect"]
 CATEGORY_NUM = len(ALL_CATEGORIES)
-#assert CATEGORY_NUM == 80
 
 
 class PreprocessYOLO(object):
@@ -36,40 +21,30 @@ class PreprocessYOLO(object):
         self.yolo_input_resolution = yolo_input_resolution
         self.offsets=offsets
 
-    def process(self, input_image, mode="auto"): 
+    def process(self, input_image): 
         """Load an image from the specified input path,
         and return it together with a pre-processed version required for feeding it into a
         YOLOv3 network.
         Keyword arguments:
         input_image_path -- string path of the image to be loaded
         """
-        image_crop, image_resized = self._load_and_resize(input_image, mode=mode)
+        image_crop, image_resized = self._load_and_resize(input_image)
         image_preprocessed = self._shuffle_and_normalize(image_resized)
         return image_crop, image_preprocessed
 
-    def _load_and_resize(self, input_image, mode="auto"):
+    def _load_and_resize(self, input_image):
         """Load an image from the specified path and resize it to the input resolution.
         Return the input image before resizing as a PIL Image (required for visualization),
         and the resized image as a NumPy float array.
         Keyword arguments:
         input_image_path -- string path of the image to be loaded
         """
-        """
-        if mode == "auto":
-            h, w = input_image.shape[:2]
-            offh, offw = 0, 0
-            if h > w: offh = int((h-w)/2)
-            else: offw = int((w-h)/2)
-            image_crop = input_image[offh:h-offh, offw:w-offw, :]
-        else: 
-            off_left, off_right, off_top, off_bottom = self.offsets
-          
-            # Crop the input image by offsets
-            h, w = input_image.shape[:2]
-            image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
-        """
-        
-        image_crop = input_image
+         
+        off_left, off_right, off_top, off_bottom = self.offsets
+      
+        # Crop the input image by offsets
+        h, w = input_image.shape[:2]
+        image_crop = input_image[off_top:h-off_bottom, off_left:w-off_right,:]
 
         # Expecting yolo_input_resolution in (height, width) format, adjusting to PIL
         # convention (width, height) in cv2:

@@ -1,35 +1,63 @@
 {
-    "Camera": {
-        "DeviceSerialNumber": "NR0190090349",
-        "ExposureTime": 300,
-        "Gain": 15,
-        "Binning": 4
+    "General": {
+        "patient_turns": 0,
+        "save_mode": "0",
+        "save_prob": 0.001,
+        "save_cycles": 1,
+        "save_dir": "C:/Users/shuai/Documents/GitHub/FabricUI/develop/io/images"
     },
-    "Lighting": {},
+    "Machine": {
+        "type": "single",
+        "input_pin": 10,
+        "size": 30,
+        "size_mapdict": {
+            "single": {
+                "30": 70.0,
+                "34": 77.5,
+                "38": 82.5
+            },
+            "double": {
+                "30": 70.0,
+                "34": 77.5
+            }
+        }
+    },
+    "Camera": {
+        "serial_number": "0000000000",
+        "exposure_time": 1000,
+        "gain": 24,
+        "binning": 4,
+        "field": 14,
+        "resolution_w": 720,
+        "resolution_h": 540
+    },
+    "Light": {},
     "Model": {
+        "categories": [
+            "defect",
+            "striation"
+        ],
         "offsets": [
             0,
             0,
             0,
             0
         ],
-        "image_raw_h": 352,
-        "image_raw_w": 352,
         "input_h": 352,
         "input_w": 352,
-        "channel": 3,
+        "input_channel": 3,
         "yolo_anchors": [
             [
-                351,
+                260,
                 16
             ],
             [
-                15,
-                188
+                346,
+                18
             ],
             [
-                16,
-                351
+                14,
+                349
             ]
         ],
         "yolo_masks": [
@@ -50,14 +78,20 @@
         "obj_threshold": 0.5,
         "nms_threshold": 0.2
     },
-    "Pattern": {
-        "learn_turns": 5,
+    "RevMonitor": {
         "input_pin": 18,
-        "steady_turns": 5,
-        "steady_offset": 0.5
+        "steady_turns": 3,
+        "rev_offset": 0.5
     },
-    "save_mode": 1,
-    "save_dir": "/home/taoli/Documents/Results",
-    "max_save_num": 1000,
-    "max_folder_save_num": 100
+    "FPSMonitor": {
+        "queue_length": 3
+    },
+    "Pattern": {
+        "s_len": 3,
+        "blank_fields": 1.2,
+        "camera_field": 14,
+        "machine_diameter": 70.0,
+        "resolution_w": 720,
+        "resolution_h": 540
+    }
 }

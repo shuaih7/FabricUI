@@ -3,9 +3,9 @@
 
 '''
 Created on 11.19.2020
-Updated on 12.31.2020
+Updated on 03.18.2021
 
-Author: haoshaui@handaotech.com
+Author: haoshuai@handaotech.com
 '''
 
 import os
@@ -26,12 +26,13 @@ from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QEvent, QSize
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QFileDialog, QMessageBox
 
-from third_party import gxipy as gx
 from log import getLogger
-from model import cudaModel
-from utils import draw_boxes
-from Workers import revWorker
-from ConfigWidget import ConfigWidget
+from widget import ConfigWidget
+from device import GXCamera as Camera
+from device import Machine as Machine
+from model import CudaModel as Model
+from monitor import FPSMonitor, RevMonitor, SaveWorker
+from pattern import PatternFilter as PatternFilter
 
 
 class MainWindow(QMainWindow):
@@ -40,308 +41,306 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         loadUi(os.path.join(os.path.abspath(os.path.dirname(__file__)), "HMI.ui"), self)
         
-        # Load the configuration matrix
+        # Load the configuration matrix and make it visible to all sub-widgets
         config_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "config.json")
         with open (config_file, "r") as f: 
             self.config_matrix = json.load(f)
-        self.imageLabel.setConfig(self.config_matrix)
+            f.close()
         
-        # Config the devices
-        self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), log_name="logging.log")
-        self.camera = None
-        self.lighting = None
-        self.model = cudaModel(self.config_matrix, self.logger)
+        # Initializations
+        self.initCache()
+        self.initParams()
+        self.initLogger()
+        self.initMachine()
+        self.initCamera()
+        self.initLight()
+        self.initModel()
+        self.initWidget()
+        self.initRevMonitor()
+        self.initFPSMonitor()
+        self.initSaveWorker()
+        self.initPatternFilter()
+        self.messager("\nFabricUI 已开启。", flag="info")
         
-        # Define the system configuration widget
-        self.configWidget = ConfigWidget(self.config_matrix)
-        self.configWidget.generalCfgSignal.connect(self.generalConfig)
-        self.configWidget.cameraCfgSignal.connect(self.cameraConfig)
-        self.configWidget.lightCfgSignal.connect(self.lightConfig)
-        self.configWidget.modelCfgSignal.connect(self.modelConfig)
+    def initCache(self):
+        self.normal_pixmap = QPixmap(os.path.join(abs_path, 'icon/pass.png'))
+        self.alert_pixmap = QPixmap(os.path.join(abs_path, 'icon/warn.png'))
         
-        # Initialize the pattern study and define the revolution monitor thread
-        self.rev = 0
-        self.revQueue = list()
-        self.revSteady = False
-        self.revNum = max(1, self.config_matrix["Pattern"]["steady_turns"])
-        self.revOffset = max(0.0, self.config_matrix["Pattern"]["steady_offset"])
+    def initParams(self):
+        self.rev = -1
+        self.status = 'normal' # Init the current inspection status
+        self.is_live = False   # Whether images are showing on the label
+        self.is_infer = False  # Whether the livestream inference is on
+        self.cur_patient_turns = 0
+        self.patient_turns = self.config_matrix['General']['patient_turns']
+        self.resetDefectMatrix()
         
-        self.lrNum = 0 # How many turns have been learnt
-        self.defectNum = 0
-        self.defectQueue = list()
-        self.lrRevNum = max(0, self.config_matrix["Pattern"]["learn_turns"]) # How many turns have to be learnt
-        
-        self.revThread = revWorker(self.config_matrix, self.logger)
-        self.revThread.revSignal.connect(self.revReceiver)
-        self.revThread.start()
-        
-        # Initialize the crucial parameters
-        self.isRunning = False   # Whether images are showing on the label
-        self.isInferring = False # Whether the livestream inference is on
+    def initLogger(self):
+        self.logger = getLogger(os.path.join(os.path.abspath(os.path.dirname(__file__)),"log"), 
+            log_name="logging.log")
+            
         self.logger_flags = {
             "debug":    self.logger.debug,
             "info":     self.logger.info,
             "warning":  self.logger.warning,
             "error":    self.logger.error,
             "critical": self.logger.critical}
-
-        self.checkSaveStatus()
-        self.message("\nFabricUI 已开启。", flag="info")
-    
-    def liveStream(self):
-        """
-        Re-config the camera when the liveStream function is called
+            
+    def initMachine(self):
+        machine_params = self.config_matrix['Machine']
+        self.machine = Machine(machine_params)
+        self.machine_size_mapdict = machine_params['size_mapdict']
         
-        Todo: integrate the device from the raw third_party module
-        Note:
-            1. Make sure to stream on the camera before capturing and stream_off before closing the device
-            2. The integration is not done here because the camera object device_manager.update_device_list()
-               will lose all of its configurations if returned or passed to another function
-        Logics:
-            1. 
-        """
-        # self.startBtn.setText("连接相机")
-        camera_config = self.config_matrix["Camera"]
-    
-        # Fetch the config parameters
-        SN = camera_config['DeviceSerialNumber']
-        ExposureTime = camera_config['ExposureTime']
-        Gain = camera_config['Gain']
-        Binning = camera_config['Binning']
-
-        # create a device manager
-        device_manager = gx.DeviceManager()
-        dev_num, dev_info_list = device_manager.update_device_list()
-        
-        if dev_num == 0: 
-            self.message("未搜寻到相机，请检查相机设置并重试。", flag="warning")
-            return
-        else:
-            self.message("搜寻到相机，连接中...", flag="info")
-        
-        # open the camera device by serial number
+    def initCamera(self):
+        self.messager("初始化相机，正在连接...")
         try:
-            cam = device_manager.open_device_by_sn(SN)
-            self.camera = cam
-            
-            # set exposure & gain
-            cam.ExposureTime.set(ExposureTime)
-            cam.Gain.set(Gain)
-            try: # Because some DH cameras do not support "binning"
-                cam.BinningHorizontal.set(Binning)
-                cam.BinningVertical.set(Binning)
-            except: pass
-
-            # set trigger mode and trigger source
-            # cam.TriggerMode.set(gx.GxSwitchEntry.OFF)
-            cam.TriggerMode.set(gx.GxSwitchEntry.ON)
-            cam.TriggerSource.set(gx.GxTriggerSourceEntry.SOFTWARE)
-            
-            # Set the status to the capturing mode
-            cam.stream_on()
-            self.message("相机连接成功。", flag="info")
-            
-            self.isRunning = True
-            self.isInterrupt = False
-            if self.isInferring: self.startBtn.setText("停止检测") # Maintain the inferring status
-            else: self.startBtn.setText("开始检测")
-            
+            camera_params = self.config_matrix["Camera"]
+            self.camera = Camera(camera_params)
+            self.messager("相机初始化成功。")
         except Exception as expt:
-            self.startBtn.setText("连接相机")
-            self.message("未连接到相机，请检查相机序列号是否正确并重试。", flag="error")
+            self.messager(str(expt), flag="error")
+            self.camera = None
+            
+    def initLight(self):
+        self.messager("光源初始化成功")
+        
+    def initModel(self):
+        self.messager("正在初始化模型...")
+        try:
+            model_params = self.config_matrix["Model"]
+            self.model = Model(model_params)
+            self.messager("模型初始化成功。")
+        except Exception as expt:
+            self.messager(str(expt), flag="error")
+            self.model = None
+            
+    def initWidget(self):
+        self.canvas.setConfig(self.config_matrix)
+        
+        self.configWidget = ConfigWidget(self.config_matrix)
+        self.configWidget.configSignal.connect(self.generalConfig)
+        self.configWidget.configSignal.connect(self.cameraConfig)
+        self.configWidget.configSignal.connect(self.lightConfig)
+        self.configWidget.configSignal.connect(self.modelConfig)
+        
+    def initRevMonitor(self):
+        rev_params = self.config_matrix['RevMonitor']
+        
+        self.rev_monitor = RevMonitor(rev_params)
+        self.rev_monitor.revSignal.connect(self.revReceiver)
+        self.rev_monitor.start()
+        
+    def initFPSMonitor(self):
+        fps_params = self.config_matrix['FPSMonitor']
+        self.fps_monitor = FPSMonitor(fps_params)
+        
+    def initSaveWorker(self):
+        save_params = self.config_matrix['General']
+        self.save_worker = SaveWorker(save_params)
+        self.save_worker.start()
+        
+    def initPatternFilter(self):
+        pattern_params = self.config_matrix['Pattern']
+        
+        machine_size = self.config_matrix['Machine']['size']
+        machine_type = self.config_matrix['Machine']['type']
+        machine_diameter = self.machine_size_mapdict[machine_type][str(machine_size)]
+        pattern_params['camera_field'] = self.config_matrix['Camera']['field']
+        pattern_params['machine_diameter'] = machine_diameter
+        pattern_params['resolution_w'] = self.config_matrix['Camera']['resolution_w']
+        pattern_params['resolution_h'] = self.config_matrix['Camera']['resolution_h']
+        self.pattern_filter = PatternFilter(pattern_params)
+        
+    def resetDefectMatrix(self):
+        self.defect_matrix = {
+            'is_defect': False,
+            'details': {
+                'defect': False,
+                'striation': False
+            }
+        } 
+        
+    def live(self):
+        # Abnormal Case 1 - Already running live view
+        if self.is_live: 
+            self.shiftInferStatus()
             return
+        
+        # Abnormal Case 2 - Camera initialized with error
+        if self.camera is None:
+            self.initCamera()
+            if self.camera is not None: self.live()
+            return 
 
-        while self.isRunning: 
+        # Normal Case - Start livestream:
+        self.is_live = True
+        self.is_infer = False
+        self.setStatus('normal')
+        self.btnLive.setText("开始检测")
+        
+        while self.is_live: 
             try:
-                self.camera.TriggerSoftware.send_command()
-                image_raw = self.camera.data_stream[0].get_image()
-                if image_raw is None: continue
-                image = image_raw.get_numpy_array()
-                if image is None: continue
-                else: # Convert gray scale to BGR
-                    c = image.shape[-1]
-                    if c != 3: image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-
+                t_intv = self.fps_monitor.countLoop()
+                image = self.camera.getImage()
             except: 
-                self.interruptStop("相机连接中断，请检查链接并重试。", flag="error")
-                # Todo: stream_off, close device ...
-                return
+                self.liveInterruption()
+                break
 
-            if self.isInferring:
-                #try:
-                image, boxes, labels, scores = self.model.infer(image)
-                self.imageLabel.refresh(image,boxes,labels,scores)
-                #self.save(image, boxes, labels, scores)
-                #except Exception as expt:
-                #    self.stopInferring("模型无法运行，请检查模型参数并重试。", flag="error")
+            if self.is_infer:
+                image, results = self.model(image)
+                if self.rev_monitor.is_steady:
+                    results['rev'] = self.rev
+                    results['intv'] = t_intv
+                    results = self.pattern_filter(results)
+                    self.processResults(results)
+                    self.save_worker(image, results)
+                else:
+                    self.pattern_filter.reset()
+                self.canvas.refresh(image, results)
             else: 
-                self.imageLabel.refresh(image)
+                self.canvas.refresh(image)
+                
             QApplication.processEvents()
             
         # Make sure to stop the steam and close the device before exit
         cam.stream_off()
         cam.close_device()
         
-    def patternStudy(self):
-        pass
-
-    @pyqtSlot()    
-    def startInferring(self):
-        """
-        Start the video thread and run inspection
+    def shiftInferStatus(self):
+        if not self.is_live: 
+            return 
+        elif self.model is None:
+            self.is_infer = False
+            self.messager("检测模型异常，请检查相关模型设置", flag="warning")
+            return
         
-        Logics:
-            Case 1. Camera disconnected (interrupted): Restart the livestrea and maintain the infer status
-            Case 2. Camera is running but inspection not running: start inferring
-            Case 3. Camera is running and inspection is running: stop inferring
-        """
-        if not self.isRunning:
-            self.liveStream()
-        else: 
-            if self.isInferring: 
-                self.stopInferring("检测中止。", flag="info")
-            else: 
-                self.isInferring = True
-                self.message("开始检测...", flag="info")
-                self.startBtn.setText("停止检测")
-                
-    """         
-    @pyqtSlot()    
-    def startTestInferring(self):
-        if self.isRunning:
-            self.stopRunning("正在结束当前检测...\n请再次点击开始测试检测。", flag="info")  
+        if self.is_infer:
+            self.is_infer = False
+            self.btnLive.setText("开始检测")
+            self.messager("检测中止")
+            self.pattern_filter.reset()
         else:
-            self.message("开始测试检测...", flag="info")
-            self.testBtn.setText("结束测试")
-            self.isRunning = True
+            self.is_infer = True
+            self.setStatus('normal')
+            self.btnLive.setText("停止检测")
+            self.messager("检测中...")
             
-            valid_dir = self.config_matrix["valid_dir"]
-            valid_suffix = self.config_matrix["valid_suffix"]
-            img_list = gb.glob(valid_dir + "/*"+valid_suffix)
+    def liveInterruption(self):
+        self.messager("相机连接中断，请检查链接并重试", flag="error")
+        self.is_live = False
+        self.is_infer = False
+        self.btnLive.setText("连接相机")
+        self.camera = None
+        
+    def processResults(self, results):
+        labels = results['labels']
+        pattern = results['pattern']
+        
+        if 'num_tailors' in pattern:
+            self.lbTailor.setText(str(pattern['num_tailors']))
+        
+        if 'is_defect' in pattern:
+            self.defect_matrix['details']['defect'] = True
+            self.defect_matrix['is_defect'] = True
+        if 'is_striation' in pattern:
+            self.defect_matrix['details']['striation'] = True
+            self.defect_matrix['is_defect'] = True
+        
+    def alert(self):
+        self.machine.stop() # Stop the weaving machine
+        self.setStatus('alert')
+        self.is_infer = False
+        self.btnLive.setText("开始检测")
+        self.pattern_filter.reset()
+        
+    def setStatus(self, status):
+        if status == self.status: return
+        elif status == 'alert':
+            self.lbStatus.setPixmap(self.alert_pixmap)
+            is_long_defect = self.defect_matrix['details']['defect']
+            is_striation = self.defect_matrix['details']['striation']
             
-            for img_file in img_list:
-                if self.isRunning:
-                    image = cv2.imread(img_file, cv2.IMREAD_COLOR)
-                    boxes, labels, scores = self.model.infer(image)
-                    self.imageLabel.refresh(image, boxes, labels, scores)
-                    QApplication.processEvents() # Refresh the MainWindow
-            self.stopRunning("测试检测完成。", flag="info")
-            self.testBtn.setText("开始测试")
-    """
+            if is_long_defect and is_striation:
+                def_info_text = r'检测到长疵和横路，请及时处理！'
+            elif is_long_defect:
+                def_info_text = r'检测到长疵，请及时处理！'
+            elif is_striation:
+                def_info_text = r'检测到横路，请及时处理！'
+            else:
+                def_info_text = r'模型错误！'
+                    
+            self.lbTextAlert.setAlert(def_info_text)
+            self.messager(def_info_text, flag="error")
+            
+        elif status == 'normal':
+            self.lbStatus.setPixmap(self.normal_pixmap)
+            self.lbTextAlert.reset()
+        self.status = status
     
     @pyqtSlot(float)
     def revReceiver(self, rev):
         self.rev = rev
-        self.revLabel.setText(str(rev))
-        self.checkRevStatus()
-    
+        is_rev_steady = self.rev_monitor.is_steady
+        self.updateDefectStatus(is_rev_steady)
+        self.lbRev.setText(str(rev))
+        
+        if is_rev_steady:
+            self.messager("转速已稳定，检测中...", flag="info")
+            self.lbRevStatus.setSteady(True)
+        else:
+            self.messager("正在等待转速稳定...", flag="info")
+            self.lbRevStatus.setSteady(False)
+            
+    def updateDefectStatus(self, is_rev_steady):
+        if not self.defect_matrix['is_defect']: return
+        
+        elif not is_rev_steady:
+            self.resetDefectMatrix()
+            self.cur_patient_turns = 0
+            
+        elif self.cur_patient_turns == self.patient_turns:
+            self.alert()
+            self.cur_patient_turns = 0
+            self.resetDefectMatrix()
+            
+        else:
+            self.cur_patient_turns += 1
+
     @pyqtSlot()
     def systemConfig(self):
-        self.configWidget.show()
+        self.configWidget.showConfig()
         
-    @pyqtSlot()
-    def reset(self):
-        pass
+    @pyqtSlot(str)
+    def generalConfig(self, module):
+        if module != "General": return
+        params = self.config_matrix[module]
+        self.messager("已更新常规设置。")
         
-    @pyqtSlot(dict)
-    def generalConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and update general configurations
-        """
-        self.config_matrix = cfg_matrix
-        if self.revThread.input_pin != cfg_matrix["Pattern"]["input_pin"]:
-            self.revThread.input_pin = cfg_matrix["Pattern"]["input_pin"]
-            
-        self.revNum = max(1, cfg_matrix["Pattern"]["steady_turns"])
-        self.revOffset = max(0.0, cfg_matrix["Pattern"]["steady_offset"])
-        self.lrRevNum = max(0, cfg_matrix["Pattern"]["learn_turns"])
-           
-        self.checkSaveStatus()
-        self.message("已更新常规设置。")
+    @pyqtSlot(str)
+    def machineConfig(self, module):
+        if module != "Machine": return
+        params = self.machine[module]
+        self.messager("已更新圆织机设置。")
         
-    @pyqtSlot(dict)
-    def cameraConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the camera
-        """
-        self.config_matrix = cfg_matrix
-        self.stopRunning(msg="更新相机配置，正在重启相机...", flag="info")
-        self.liveStream()
+    @pyqtSlot(str)
+    def cameraConfig(self, module):
+        if module != "Camera": return 
+        params = self.config_matrix[module]
+        self.camera.updateParams(params)
+        self.messager("已更新相机设置。")
         
-    @pyqtSlot(dict)
-    def lightConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the light       
-        """
-        self.config_matrix = cfg_matrix
+    @pyqtSlot(str)
+    def lightConfig(self, module):
+        if module != "Light": return
+        params = self.config_matrix[module]
         
-    @pyqtSlot(dict)
-    def modelConfig(self, cfg_matrix):
-        """
-        Receive the config_matrix from ConfigWidget, update the config_matrix, and re-config the model
-        """
-        self.config_matrix = cfg_matrix
-        self.stopInferring(msg="更新相机配置，正在重启模型...", flag="info")
-        self.model = cudaModel(self.config_matrix, self.logger)
-        self.message("模型配置完成，请点击“开始检测”按钮以开始布匹的检测。")
+    @pyqtSlot(str)
+    def modelConfig(self, module):
+        if module != "Model": return 
+        params = self.config_matrix[module]
         
-    def stopInferring(self, msg=None, flag="info"):
-        self.isInferring = False
-        self.startBtn.setText("开始检测")
-        if msg is not None: self.message(msg, flag=flag)
-
-    def stopRunning(self, msg=None, flag="info"):
-        self.isRunning = False
-        self.isInferring = False
-        self.startBtn.setText("开始检测")
-        if msg is not None: self.message(msg, flag=flag)
-        
-    def interruptStop(self, msg=None, flag="error"):
-        self.isRunning = False
-        self.startBtn.setText("连接相机")
-        if msg is not None: self.message(msg, flag=flag)
-        
-    def checkRevStatus(self):
-        if len(self.revQueue) == 0: 
-            self.revQueue.append(self.rev)
-            self.revSteady = False
-        else:
-            rev_a = sum(self.revQueue) / len(self.revQueue) # Averaged revolution
-            
-            if abs(self.rev - rev_a) <= self.revOffset: 
-                if len(self.revQueue) < self.revNum:
-                    self.revQueue.append(self.rev)
-                else: # len(self.revQueue) == self.revNum
-                    self.revQueue.pop(0)
-                    self.revQueue.append(self.rev)
-                    self.revSteady = True
-            else:
-                self.revQueue = list()
-                self.revSteady = False
-                
-    def checkSaveStatus(self):
-        if self.config_matrix["save_mode"] not in [0, 1, 2]:
-            raise ValueError("Invalid save mode.")
-        else: self.save_mode = self.config_matrix["save_mode"]
-
-        if not os.path.exists(self.config_matrix["save_dir"]):
-            os.mkdir(self.config_matrix["save_dir"])
-        else: self.save_dir = self.config_matrix["save_dir"]
-        
-    def save(self, image, boxes, labels, scores):
-        if self.save_mode == 0: return
-        
-        save_name = os.path.join(self.save_dir, datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S.%f')+".png")
-        
-        if self.save_mode == 1: # Save all
-            cv2.imwrite(save_name, image)
-            
-        elif self.save_mode == 2: # Only save the defect image
-            if len(boxes) > 0: cv2.imwrite(save_name, image)
-        
-    def message(self, msg, flag="info"): 
-        self.logger_flags[flag](msg)
-        self.statusLabel.setText(msg)
+    def messager(self, msg, flag="info"): 
+        self.logger_flags[flag.lower()](msg)
         
     def closeEvent(self, ev):   
         reply = QMessageBox.question(
@@ -352,12 +351,8 @@ class MainWindow(QMainWindow):
             QMessageBox.No)
 
         if reply == QMessageBox.Yes: 
-            #if self.isInferring: self.isInferring = False
-            #if self.isRunning: self.isRunning = False
-            self.message("FabricUI 已关闭。\n", flag="info")
-            self.revThread.exit()
+            self.messager("FabricUI 已关闭。\n", flag="info")
             sys.exit()
-            #ev.accept()
         else: ev.ignore()
       
         
