@@ -31,7 +31,7 @@ from widget import ConfigWidget
 from device import GXCamera as Camera
 from device import Machine as Machine
 from model import CudaModel as Model
-from monitor import FPSMonitor, RevMonitor 
+from monitor import FPSMonitor, RevMonitor, SaveWorker
 from pattern import PatternFilter as PatternFilter
 
 
@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
         self.initWidget()
         self.initRevMonitor()
         self.initFPSMonitor()
+        self.initSaveWorker()
         self.initPatternFilter()
         self.messager("\nFabricUI 已开启。", flag="info")
         
@@ -133,6 +134,11 @@ class MainWindow(QMainWindow):
         fps_params = self.config_matrix['FPSMonitor']
         self.fps_monitor = FPSMonitor(fps_params)
         
+    def initSaveWorker(self):
+        save_params = self.config_matrix['General']
+        self.save_worker = SaveWorker(save_params)
+        self.save_worker.start()
+        
     def initPatternFilter(self):
         pattern_params = self.config_matrix['Pattern']
         
@@ -187,6 +193,7 @@ class MainWindow(QMainWindow):
                     results['intv'] = t_intv
                     results = self.pattern_filter(results)
                     self.processResults(results)
+                    self.save_worker(image, results)
                 else:
                     self.pattern_filter.reset()
                 self.canvas.refresh(image, results)

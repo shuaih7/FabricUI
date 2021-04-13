@@ -2,7 +2,9 @@
     "General": {
         "patient_turns": 0,
         "save_mode": "0",
-        "save_dir": "/home/taoli/Documents/Results"
+        "save_prob": 0.001,
+        "save_cycles": 1,
+        "save_dir": "C:/Users/shuai/Documents/GitHub/FabricUI/develop/io/images"
     },
     "Machine": {
         "type": "single",
@@ -22,7 +24,7 @@
     },
     "Camera": {
         "serial_number": "0000000000",
-        "exposure_time": 2000,
+        "exposure_time": 1000,
         "gain": 24,
         "binning": 4,
         "field": 14,
@@ -85,6 +87,7 @@
         "queue_length": 3
     },
     "Pattern": {
+        "s_len": 3,
         "blank_fields": 1.2,
         "camera_field": 14,
         "machine_diameter": 70.0,

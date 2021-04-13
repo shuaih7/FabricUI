@@ -41,7 +41,7 @@ class PatternFilter(object):
         self.reset()
         
         # Temporary - striation filter
-        self.s_len = 3
+        self.s_len = params['s_len']
         self.num_s_frames = 0
         self.pre_s_boxes = None
         self.is_striation = False
@@ -148,7 +148,8 @@ class PatternFilter(object):
         
         for i in range(dist_matrix.shape[0]):
             dist_slice = dist_matrix[i,:]
-            if len(dist_slice[dist_slice < pattern_width*2.0]) >= 1:
+            #if len(dist_slice[dist_slice < pattern_width*2.0]) >= 1:
+            if len(dist_slice[dist_slice < 100]) >= 1:
                 overlap += 1
         
         return overlap
@@ -162,6 +163,7 @@ class PatternFilter(object):
         
         if self.is_striation: 
             pattern['is_striation'] = True
+            self.is_striation = False # Reset the striation status
 
         if self.num_tailors < self.cur_num_tailors and self.is_record:
             pattern['is_defect'] = True
