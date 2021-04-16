@@ -50,7 +50,7 @@ class PatternFilter(object):
     def reset(self):
         self.avg_intv = 0          # Exponentially averaged time interval between two consecutive frames
         self.avg_width = 0         # Exponentially averaged defect width
-        self.num_tailors = 0       # Number of tailors (long defects) of the first cycle
+        self.num_tailors = self.params['ntailors']       # Number of tailors (long defects) of the first cycle
         self.cur_num_tailors = 0   # Number of tailors (long defects) of the current cycle
         self.res_queue = list()    # Result queue containing the results with defects within one cycle
         self.is_record = False     # Status for whether the number of tailors is recorded
@@ -100,7 +100,7 @@ class PatternFilter(object):
                 if not self.mightHaveTailor() and len(self.res_queue) > 0: 
                     self.parseResQueue() # Update the current number of tailors
                     
-                    if not self.is_record: self.num_tailors = self.cur_num_tailors
+                    if not self.is_record: self.num_tailors = self.params['ntailors']
                     self.res_queue.clear()
         
         self.checkResults(results)
@@ -149,7 +149,7 @@ class PatternFilter(object):
         for i in range(dist_matrix.shape[0]):
             dist_slice = dist_matrix[i,:]
             #if len(dist_slice[dist_slice < pattern_width*2.0]) >= 1:
-            if len(dist_slice[dist_slice < 100]) >= 1:
+            if len(dist_slice[dist_slice < self.params['off_pixels']]) >= 1:
                 overlap += 1
         
         return overlap

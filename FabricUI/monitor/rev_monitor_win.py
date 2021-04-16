@@ -35,5 +35,5 @@ class RevMonitor(QThread):
         while True:
             time.sleep(3)
             cur_cycle += 1
-            self.revSignal.emit(20.001)
+            self.revSignal.emit(19.6)
             if cur_cycle == self.steady_turns: self.is_steady = True

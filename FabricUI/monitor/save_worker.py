@@ -13,6 +13,7 @@ import os
 import cv2
 import time
 import json
+import copy
 import asyncio
 import numpy as np
 from datetime import datetime
@@ -42,6 +43,9 @@ class SaveWorker(QThread):
     async def saveFunc(self, image, results):
         fname = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3]
         prefix = os.path.join(self.prefix_dir, fname)
+     
+        results['labels'] = results['labels'].tolist()
+        results['scores'] = results['scores'].tolist()
         
         cv2.imwrite(prefix + '.png', image)
         with open(prefix + '.json', "w", encoding="utf-8") as f:
