@@ -3,7 +3,7 @@
 
 '''
 Created on 11.19.2020
-Updated on 03.18.2021
+Updated on 04.16.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -175,7 +175,6 @@ class MainWindow(QMainWindow):
         # Normal Case - Start livestream:
         self.is_live = True
         self.is_infer = False
-        self.setStatus('normal')
         self.btnLive.setText("开始检测")
         
         while self.is_live: 
@@ -203,8 +202,8 @@ class MainWindow(QMainWindow):
             QApplication.processEvents()
             
         # Make sure to stop the steam and close the device before exit
-        cam.stream_off()
-        cam.close_device()
+        self.camera.stream_off()
+        self.camera.close_device()
         
     def shiftInferStatus(self):
         if not self.is_live: 
@@ -214,16 +213,22 @@ class MainWindow(QMainWindow):
             self.messager("检测模型异常，请检查相关模型设置", flag="warning")
             return
         
-        if self.is_infer:
-            self.is_infer = False
-            self.btnLive.setText("开始检测")
-            self.messager("检测中止")
-            self.pattern_filter.reset()
-        else:
+        if not self.is_infer:
             self.is_infer = True
             self.setStatus('normal')
             self.btnLive.setText("停止检测")
             self.messager("检测中...")
+        elif self.status == 'alert':
+            self.setStatus('normal')
+            self.btnLive.setText("停止检测")
+        else:
+            self.is_infer = False
+            self.btnLive.setText("开始检测")
+            self.messager("检测中止")
+            
+        self.cur_patient_turns = 0
+        self.resetDefectMatrix()
+        self.pattern_filter.reset()
             
     def liveInterruption(self):
         self.messager("相机连接中断，请检查链接并重试", flag="error")
@@ -245,13 +250,12 @@ class MainWindow(QMainWindow):
         if 'is_striation' in pattern:
             self.defect_matrix['details']['striation'] = True
             self.defect_matrix['is_defect'] = True
+            
+        results['defect_matrix'] = self.defect_matrix
         
     def alert(self):
         self.machine.stop() # Stop the weaving machine
         self.setStatus('alert')
-        self.is_infer = False
-        self.btnLive.setText("开始检测")
-        self.pattern_filter.reset()
         
     def setStatus(self, status):
         if status == self.status: return
@@ -268,7 +272,8 @@ class MainWindow(QMainWindow):
                 def_info_text = r'检测到横路，请及时处理！'
             else:
                 def_info_text = r'模型错误！'
-                    
+            
+            self.btnLive.setText("重置界面")
             self.lbTextAlert.setAlert(def_info_text)
             self.messager(def_info_text, flag="error")
             
@@ -297,12 +302,8 @@ class MainWindow(QMainWindow):
         elif not is_rev_steady:
             self.resetDefectMatrix()
             self.cur_patient_turns = 0
-            
         elif self.cur_patient_turns == self.patient_turns:
             self.alert()
-            self.cur_patient_turns = 0
-            self.resetDefectMatrix()
-            
         else:
             self.cur_patient_turns += 1
 
