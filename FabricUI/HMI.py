@@ -202,8 +202,9 @@ class MainWindow(QMainWindow):
             QApplication.processEvents()
             
         # Make sure to stop the steam and close the device before exit
-        self.camera.stream_off()
-        self.camera.close_device()
+        # self.camera.stream_off()
+        # self.camera.close_device()
+        self.liveInterruption()
         
     def shiftInferStatus(self):
         if not self.is_live: 
@@ -215,14 +216,15 @@ class MainWindow(QMainWindow):
         
         if not self.is_infer:
             self.is_infer = True
-            self.setStatus('normal')
+            self.setWidgetStatus('infer')
             self.btnLive.setText("停止检测")
             self.messager("检测中...")
         elif self.status == 'alert':
-            self.setStatus('normal')
+            self.setWidgetStatus('infer')
             self.btnLive.setText("停止检测")
         else:
             self.is_infer = False
+            self.setWidgetStatus('normal')
             self.btnLive.setText("开始检测")
             self.messager("检测中止")
             
@@ -255,9 +257,9 @@ class MainWindow(QMainWindow):
         
     def alert(self):
         self.machine.stop() # Stop the weaving machine
-        self.setStatus('alert')
+        self.setWidgetStatus('alert')
         
-    def setStatus(self, status):
+    def setWidgetStatus(self, status):
         if status == self.status: return
         elif status == 'alert':
             self.lbStatus.setPixmap(self.alert_pixmap)
@@ -276,10 +278,13 @@ class MainWindow(QMainWindow):
             self.btnLive.setText("重置界面")
             self.lbTextAlert.setAlert(def_info_text)
             self.messager(def_info_text, flag="error")
-            
+              
         elif status == 'normal':
             self.lbStatus.setPixmap(self.normal_pixmap)
             self.lbTextAlert.reset()
+        elif status == 'infer':
+            self.lbStatus.setPixmap(self.normal_pixmap)
+            self.lbTextAlert.setInfer()
         self.status = status
     
     @pyqtSlot(float)

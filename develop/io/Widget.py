@@ -3,7 +3,7 @@
 
 '''
 Created on 03.31.2020
-Updated on 03.31.2020
+Updated on 04.17.2020
 
 Author: haoshuai@handaotech.com
 '''
@@ -14,6 +14,7 @@ import cv2
 import time
 import asyncio
 import glob as gb
+import numpy as np
 
 abs_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(abs_path)
@@ -28,7 +29,9 @@ from Worker import SaveWorker
 save_params = {
     'save_dir': r'C:\Users\shuai\Documents\GitHub\FabricUI\develop\io\images',
     'save_prob': 0.5,
-    'save_cycles': 1
+    'save_cycles': 1,
+    'save_def_cycles': 3,
+    'save_def_intv': 120
 }
 
 
@@ -58,9 +61,13 @@ class Widget(QWidget):
             results = {
                 'rev': 20,
                 'intv': 0.08,
-                'boxes': [],
-                'labels': [],
-                'scores': []
+                'boxes': [[1,10,1,10]],
+                'labels': np.array([0]),
+                'scores': np.array([0.7]),
+                'pattern': [],
+                'defect_matrix': {
+                    'is_defect': True
+                }
             }
             
             self.label.refresh(image)

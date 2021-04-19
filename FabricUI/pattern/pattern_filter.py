@@ -244,5 +244,12 @@ class PatternFilter(object):
             self.recordStartTime(results)
         else: 
             self.recordTailor(results)
+            
+        if not isinstance(results['boxes'], list):
+            results['boxes'] = results['boxes'].tolist()
+        if not isinstance(results['labels'], list):
+            results['labels'] = results['labels'].tolist()
+        if not isinstance(results['scores'], list):
+            results['scores'] = results['scores'].tolist()
         
         return results

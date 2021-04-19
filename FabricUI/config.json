@@ -4,6 +4,8 @@
         "save_mode": "0",
         "save_prob": 1.0,
         "save_cycles": 1,
+        "save_def_cycles": 5,
+        "save_def_intv": 1000,
         "save_dir": "/home/hdt001/Documents/data"
     },
     "Machine": {
