@@ -122,6 +122,7 @@ class MainWindow(QMainWindow):
         self.configWidget.configSignal.connect(self.cameraConfig)
         self.configWidget.configSignal.connect(self.lightConfig)
         self.configWidget.configSignal.connect(self.modelConfig)
+        self.setWidgetStatus('normal')
         
     def initRevMonitor(self):
         rev_params = self.config_matrix['RevMonitor']
@@ -181,6 +182,7 @@ class MainWindow(QMainWindow):
             try:
                 t_intv = self.fps_monitor.countLoop()
                 image = self.camera.getImage()
+                if image is None: continue
             except: 
                 self.liveInterruption()
                 break

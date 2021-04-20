@@ -244,7 +244,7 @@ class PatternFilter(object):
             self.recordStartTime(results)
         else: 
             self.recordTailor(results)
-            
+
         if not isinstance(results['boxes'], list):
             results['boxes'] = results['boxes'].tolist()
         if not isinstance(results['labels'], list):

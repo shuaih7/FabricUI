@@ -18,7 +18,7 @@ class TextAlertLabel(QLabel):
     def __init__(self, parent=None):
         super(TextAlertLabel, self).__init__(parent)
         self.normal_style = r'font: bold;font-size: 25px;height: 36px;width: 100px; background-color:rgb(207,207,207)'
-        self.infer_style = r'font: bold;font-size: 25px;height: 36px;width: 100px; background-color:rgb(0,255,0)'
+        self.infer_style = r'font: bold;font-size: 25px;height: 36px;width: 100px; background-color:rgb(20,255,20)'
         self.alert_style = r'font: bold;font-size: 25px;height: 36px;width: 100px; background-color:rgb(255,0,0)'
         self.setAlignment(Qt.AlignCenter)
         

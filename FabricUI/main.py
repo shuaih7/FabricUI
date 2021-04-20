@@ -12,7 +12,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 app = QApplication(sys.argv)
 
-from HMI import MainWindow
+from .HMI import MainWindow
 
 
 def main():

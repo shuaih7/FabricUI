@@ -31,6 +31,7 @@ class SaveWorker(QThread):
     def updateParams(self, params):
         self.save_dir = params['save_dir']
         self.save_prob = params['save_prob']
+        self.save_intv = params['save_intv']
         self.save_def_intv = params['save_def_intv']
         
         self.async_saved = 0
@@ -38,15 +39,13 @@ class SaveWorker(QThread):
         self.frames_saving = 0
         self.prefix_dir = ''
         self.is_start = False
+        self.start_time = 0
         self.def_start_time = 0
         self.params = params
           
     async def saveFunc(self, image, results):
         fname = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3]
         prefix = os.path.join(self.prefix_dir, fname)
-     
-        results['labels'] = results['labels'].tolist()
-        results['scores'] = results['scores'].tolist()
         
         cv2.imwrite(prefix + '.png', image)
         with open(prefix + '.json', "w", encoding="utf-8") as f:
@@ -98,7 +97,7 @@ class SaveWorker(QThread):
         prefix_dir_name = datetime.now().strftime('%H-%M-%S-%f')[:-3]
         if is_defect: 
             prefix_dir_name = prefix_dir_name + '_defect'
-        
+
         return prefix_dir_name
     
     # Make sure to let self.is_start = False before call this function
@@ -106,10 +105,12 @@ class SaveWorker(QThread):
         is_defect = results['defect_matrix']['is_defect']
         
         if not is_defect:
-            if np.random.uniform(0, 1) > self.save_prob: 
+            # if np.random.uniform(0, 1) > self.save_prob:
+            if time.time()-self.start_time < self.save_intv: 
                 return False
             else: 
                 self.save_cycles = self.params['save_cycles']
+                self.start_time = time.time()
                 return True
         else:
             if time.time()-self.def_start_time < self.save_def_intv: 
