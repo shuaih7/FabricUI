@@ -3,7 +3,7 @@
 
 '''
 Created on 11.20.2020
-Updated on 03.08.2021
+Updated on 04.25.2021
 
 Author: haoshuai@handaotech.com
 '''
@@ -47,11 +47,26 @@ class RevMonitor(QThread):
         self.steady_turns = params["steady_turns"]
         self.rev_offset = params["rev_offset"]
         self.rev_queue = MonitorQueue(self.steady_turns)
+        
+        self.recent_time = time.time()
+        self.recent_rev = 0.0001
+        
+    def checkRevStatus(self):
+        interval = time.time() - self.recent_time
+        max_cycle_intv = 60.0 / max(0.001, self.recent_rev-self.rev_offset) + 1.0
+        
+        if interval > max_cycle_intv:
+            self.is_steady = False
+            temp_rev = max(0.0, self.recent_rev-self.rev_offset-0.001)
+            self.revSignal.emit(round(temp_rev, 3))
+            self.rev_queue.append(temp_rev)
     
     def updateRevStatus(self, rev):
         self.rev_queue.append(rev)
         
-        if not self.rev_queue.is_full:
+        if rev <= self.rev_offset:
+            self.is_steady = False
+        elif not self.rev_queue.is_full:
             self.is_steady = False
         elif self.rev_queue.getDiff() < self.rev_offset:
             self.is_steady = True
@@ -63,6 +78,7 @@ class RevMonitor(QThread):
             start = time.time()
             # set start time to measure second used per round
             while True:
+                self.checkRevStatus()
                 value = GPIO.input(self.input_pin)
                 
                 if value != self.prev_value:
@@ -72,15 +88,18 @@ class RevMonitor(QThread):
                     # GPIO changed to LOW when signal coming in
                     else:
                         value_str = 'LOW'
+                        self.recent_time = time.time()
                         # calculate second used per round
-                        spr = time.time() - start
+                        spr = self.recent_time - start
                         # calculate RPM
                         rev = 60.0 / spr
                         # send out the revolution value
                         self.updateRevStatus(rev)
                         self.revSignal.emit(round(rev, 3))
                         # reset start time for next round
-                        start = time.time()
+                        start = self.recent_time
+                        self.recent_rev = rev
+                        
                     self.prev_value = value
                     
         except Exception as expt:

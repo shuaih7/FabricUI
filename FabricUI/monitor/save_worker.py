@@ -19,7 +19,6 @@ import numpy as np
 from datetime import datetime
 
 from PyQt5.QtCore import QThread, pyqtSignal
-from threading import Thread
 
 
 class SaveWorker(QThread):
